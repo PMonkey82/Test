@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Lupo Solitario — Foglio Battaglia v4</title>
+<title>Lupo Solitario — Foglio di Battaglia</title>
 <meta name="theme-color" content="#1c1710">
 <style>
   :root{
     --bg:#1c1710; --panel:#231c13; --ink:#e8dec7; --muted:#b9ae95; --accent:#caa25d; --accent-dark:#8a6a2c;
     --emerald:#34d399; --emerald-ink:#c8f3df; --ring:#caa25d55;
-    --rule:#6e5a3344; --paper:#1b160f;
-    --shadow:#00000066;
+    --rule:#6e5a3344; --paper:#1b160f; --shadow:#00000066;
     --mono: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
     --serif: "Palatino Linotype", Palatino, "Times New Roman", Georgia, serif;
     --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Helvetica, Arial;
+    --emerald-dim:#2b8d6d; --danger:#c24a4a; --gold:#caa25d;
   }
   *{ box-sizing:border-box; }
   html,body{ margin:0; }
@@ -28,11 +28,12 @@
   }
   .wrap{ max-width: 1040px; margin:auto; padding:14px; display:grid; gap:14px }
   header{ text-align:center; border-bottom:3px double #6e5a33; padding:8px 0 10px }
-  h1{ font-size: clamp(22px, 6vw, 34px); margin:0; font-variant: small-caps; letter-spacing:.06em }
-  .statusBar{
-    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; color:var(--muted); font-family:var(--sans); font-size:14px; 
-    margin-top:6px
-  }
+  h1{ font-size: clamp(22px, 6vw, 36px); margin:0; font-variant: small-caps; letter-spacing:.06em }
+  .subtitle{ margin-top:2px; color:var(--muted); font-variant: small-caps; letter-spacing:.06em }
+  .toolbar{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin-top:10px }
+  .toolbar .btn{ padding:8px 10px }
+  .autosaveRow{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; color:var(--muted); font-family:var(--sans); font-size:14px }
+  select, .num{ background:#1b160f; border:1px solid var(--rule); color:var(--ink); border-radius:10px; padding:8px 10px; font-family:var(--sans) }
   .card{
     background: var(--panel); border:1px solid var(--rule); border-radius:16px; padding:14px;
     box-shadow: 0 14px 40px var(--shadow), inset 0 0 60px #00000033;
@@ -44,19 +45,22 @@
     border:1px solid var(--rule); border-radius:12px; background: var(--paper);
     box-shadow: inset 0 0 40px #00000045; padding:12px;
   }
+  /* Square-ish controls */
+  .square{ display:grid; grid-template-columns: auto 64px auto; align-items:center; gap:6px }
+  .square input[type="number"]{ width:64px }
   .bigValue{
     text-align:center; font-weight:900; color:var(--emerald); font-family:var(--mono);
-    font-size: clamp(48px, 12vw, 80px); line-height:1; padding:8px 0; background:#17120b; border:1px solid var(--rule); border-radius:12px;
+    font-size: clamp(44px, 12vw, 72px); line-height:1; padding:8px 0; background:#17120b; border:1px solid var(--rule); border-radius:12px;
     box-shadow: inset 0 0 0 1px #2f7f5d55;
   }
   .split{ display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:10px; }
-  .slash{ font-size: clamp(32px, 9vw, 54px); color:var(--muted); }
+  .slash{ font-size: clamp(28px, 9vw, 48px); color:var(--muted); }
   .boxLabel{ font-family:var(--sans); font-size:12px; color:var(--muted); text-align:center }
   .stepper{ display:flex; gap:6px; align-items:center }
   .mini{ padding:10px 12px; border-radius:10px; border:1px solid #6e5a3344; background:#2a2216; color:#f0e6cd; font-weight:800; touch-action: manipulation; }
   input[type="number"]{
-    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #6e5a3355; background:#1b160f; color:var(--emerald-ink); font-family:var(--mono);
-    box-shadow: inset 0 0 0 1px #2f7f5d55; appearance:textfield; font-size:18px;
+    width:100%; padding:10px 10px; border-radius:12px; border:1px solid #6e5a3355; background:#1b160f;
+    color:var(--emerald-ink); font-family:var(--mono); box-shadow: inset 0 0 0 1px #2f7f5d55; appearance:textfield; font-size:18px; text-align:center;
   }
   input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button{ display:none }
   .modsGrid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; }
@@ -68,36 +72,59 @@
   .btn{ border:2px solid var(--accent-dark); background:linear-gradient(180deg, #7a6330, #5a4620); color:#f2e6c7;
         padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; text-transform: uppercase; letter-spacing:.6px; }
   .btn:active{ transform: translateY(1px) }
-  .weaponList{ width:100%; border-collapse:collapse }
-  .weaponList th, .weaponList td{ border-bottom:1px solid var(--rule); padding:8px }
-  .weaponList th{ background:#2a2216; text-align:left; font-variant: small-caps }
-  .wName{ font-weight:700 }
-  .wDisc{ width:40px; text-align:center }
-  .rightPack{ text-align:right }
-  .modCompact{ max-width:80px; display:inline-block; vertical-align:middle }
-  .equipCompact{ display:inline-block; width:28px; text-align:center }
-  .small{ font-size:12px; color:var(--muted) }
+  /* Armamento */
   .armBox{ background:#17120b; border:1px solid var(--rule); border-radius:10px; padding:8px }
   .armLine{ padding:8px; border:1px dashed var(--rule); border-radius:8px; min-height:36px; display:flex; align-items:center; font-family:var(--sans) }
   .armLine + .armLine{ margin-top:6px }
-  .hint{ color:var(--muted); font-size:12px; margin-top:6px }
-  footer{ color:var(--muted); font-size:12px; text-align:center }
+  .weaponList{ width:100%; border-collapse:collapse }
+  .weaponList th, .weaponList td{ border-bottom:1px solid var(--rule); padding:4px 6px } /* compact rows */
+  .weaponList th{ background:#2a2216; text-align:left; font-variant: small-caps }
+  .wName{ font-weight:700 }
+  .wDisc{ width:40px; text-align:center }
+  .rightPack{ text-align:right; white-space:nowrap }
+  .modCompact{ max-width:70px; display:inline-block; vertical-align:middle; text-align:center }
+  .equipCompact{ display:inline-block; width:28px; text-align:center }
   .kaiGrid{ display:grid; gap:10px; }
   @media (min-width: 860px){ .kaiGrid{ grid-template-columns: 1fr 1fr; } }
+  /* Toast */
+  .toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#2a2216; color:#f5e9cc; border:1px solid #6e5a33; padding:10px 14px; border-radius:10px; box-shadow:0 10px 30px #0008; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px) }
+  /* Mute */
+  .muteRow{ display:flex; gap:10px; justify-content:center; align-items:center; color:var(--muted); font-family:var(--sans); font-size:14px }
+  /* Subtle highlight for Disciplina row */
+  tr.kaiFav{ outline: 1px solid #2f7f5d88; background:#1c1710 }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>Lupo Solitario — Foglio Battaglia v4</h1>
-      <div class="statusBar">
-        <label><input type="checkbox" id="autosave" checked> Autosalvataggio (5 min)</label>
-        <button class="btn" id="saveNow">Salva ora</button>
-        <span class="small">Ultimo salvataggio: <span id="lastSave">—</span></span>
-        <span class="small">Ripristina: </span>
+      <h1>Lupo Solitario</h1>
+      <div class="subtitle">Foglio di Battaglia</div>
+
+      <!-- Toolbar row -->
+      <div class="toolbar">
         <button class="btn" id="restore1">Slot 1</button>
         <button class="btn" id="restore2">Slot 2</button>
         <button class="btn" id="restore3">Slot 3</button>
+        <button class="btn" id="saveNow">Salva ora</button>
+        <span class="small">Ultimo salvataggio: <span id="lastSave">—</span></span>
+      </div>
+
+      <!-- Autosave row -->
+      <div class="autosaveRow">
+        <label><input type="checkbox" id="autosave" checked> Autosalvataggio</label>
+        <label>Intervallo
+          <select id="autosaveMins">
+            <option value="1">1 min</option>
+            <option value="3">3 min</option>
+            <option value="5" selected>5 min</option>
+            <option value="10">10 min</option>
+            <option value="30">30 min</option>
+          </select>
+        </label>
+      </div>
+      <div class="muteRow">
+        <label><input type="checkbox" id="muteToggle"> Muta suoni</label>
       </div>
     </header>
 
@@ -109,20 +136,20 @@
           <div class="boxLabel">Totale</div>
           <div id="cmbTotal" class="bigValue">0</div>
           <div class="boxLabel">Base</div>
-          <div class="stepper">
+          <div class="square">
             <button class="mini" type="button" data-step="cmbBase" data-delta="-1">−</button>
-            <input type="number" id="cmbBase" value="0" inputmode="numeric" pattern="[0-9]*">
+            <input class="num" type="number" id="cmbBase" value="0" inputmode="numeric" pattern="[0-9]*">
             <button class="mini" type="button" data-step="cmbBase" data-delta="1">+</button>
           </div>
         </div>
         <div class="panel" style="margin-top:10px">
           <div class="h2" style="margin:0 0 6px">Modificatori</div>
           <div class="modsGrid">
-            <div class="modBox readonly"><label>Armi (somma)</label><input type="number" id="cmbW1" value="0" readonly></div>
+            <div class="modBox readonly"><label>Disciplina (Kai)</label><input type="number" id="cmbW1" value="0" readonly></div>
+            <div class="modBox"><label>Talento</label><input type="number" id="cmbM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Oggetto</label><input type="number" id="cmbM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Circostanza</label><input type="number" id="cmbM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="modBox readonly"><label>—</label><input type="number" id="cmbW2" value="0" readonly></div>
-            <div class="modBox"><label>Mod A</label><input type="number" id="cmbM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod B</label><input type="number" id="cmbM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod C</label><input type="number" id="cmbM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
           </div>
           <div class="hint">Se nessuna arma è equipaggiata: malus automatico <strong>−4</strong>.</div>
         </div>
@@ -134,15 +161,17 @@
         <div class="panel">
           <div class="boxLabel">Attuale / Totale</div>
           <div class="split">
-            <div>
-              <div class="stepper">
-                <button class="mini" type="button" data-step="endCur" data-delta="-1">−</button>
-                <input type="number" id="endCur" value="0" inputmode="numeric" pattern="[0-9]*">
-                <button class="mini" type="button" data-step="endCur" data-delta="1">+</button>
-              </div>
+            <div class="square">
+              <button class="mini" type="button" data-step="endCur" data-delta="-1">−</button>
+              <input class="num" type="number" id="endCur" value="0" inputmode="numeric" pattern="[0-9]*">
+              <button class="mini" type="button" data-step="endCur" data-delta="1">+</button>
             </div>
             <div class="slash">/</div>
-            <div><input type="number" id="endTot" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="square">
+              <button class="mini" type="button" data-step="endTot" data-delta="-1">−</button>
+              <input class="num" type="number" id="endTot" value="0" inputmode="numeric" pattern="[0-9]*">
+              <button class="mini" type="button" data-step="endTot" data-delta="1">+</button>
+            </div>
           </div>
         </div>
         <div class="panel" style="margin-top:10px">
@@ -154,7 +183,6 @@
             <div class="modBox"><label>Mod 4</label><input type="number" id="endM4" value="0" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="modBox"><label>Mod 5</label><input type="number" id="endM5" value="0" inputmode="numeric" pattern="[0-9]*"></div>
           </div>
-          <div class="hint">L’Attuale è il valore modificabile; i mod si sommano temporaneamente.</div>
         </div>
       </section>
     </div>
@@ -169,45 +197,47 @@
             <div class="armLine" id="armLine2">—</div>
           </div>
           <div class="row" style="min-width: 240px; justify-content:center">
-            <span class="small">Seleziona le armi da usare e indica i loro Mod.</span>
+            <span class="small">Massimo 2 armi equipaggiate.</span>
           </div>
         </div>
       </div>
 
       <div class="panel" style="margin-top:10px">
         <h2 class="h2" style="margin:0 0 6px">Disciplina della Scherma Kai</h2>
-        <div class="small" style="margin-bottom:8px">Seleziona <strong>una sola</strong> arma per la Disciplina (Kai) — vale <strong>+2</strong> se anche “Equip”. A destra inserisci <em>Mod</em> ed eventualmente spunta <em>Equip</em> (nessun limite).</div>
+        <div class="small" style="margin-bottom:8px">Spunta <strong>una sola</strong> arma come Disciplina (Kai) — ottieni <strong>+2</strong> se anche “Equip”. A destra imposta il <em>Mod</em> e usa ± o input. Righe più compatte.</div>
         <div class="kaiGrid">
           <table class="weaponList" id="weaponLeft">
-            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th>Mod</th><th>Equip</th></tr></thead>
+            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th class="rightPack" colspan="2">Mod &nbsp; Equip.</th></tr></thead>
             <tbody>
-              <tr data-name="Asta"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Asta</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Spada"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spada</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Daga"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Daga</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Martello"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Martello</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Pugnale"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Pugnale</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Asta"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Asta</td><td class="rightPack"><button class="mini" data-step="wmod-Asta" data-delta="-1">−</button><input class="modCompact" id="wmod-Asta" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Asta" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Spada"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spada</td><td class="rightPack"><button class="mini" data-step="wmod-Spada" data-delta="-1">−</button><input class="modCompact" id="wmod-Spada" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Spada" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Daga"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Daga</td><td class="rightPack"><button class="mini" data-step="wmod-Daga" data-delta="-1">−</button><input class="modCompact" id="wmod-Daga" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Daga" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Martello"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Martello</td><td class="rightPack"><button class="mini" data-step="wmod-Martello" data-delta="-1">−</button><input class="modCompact" id="wmod-Martello" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Martello" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Pugnale"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Pugnale</td><td class="rightPack"><button class="mini" data-step="wmod-Pugnale" data-delta="-1">−</button><input class="modCompact" id="wmod-Pugnale" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Pugnale" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
             </tbody>
           </table>
           <table class="weaponList" id="weaponRight">
-            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th>Mod</th><th>Equip</th></tr></thead>
+            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th class="rightPack" colspan="2">Mod &nbsp; Equip.</th></tr></thead>
             <tbody>
-              <tr data-name="Lancia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Lancia</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Spadone"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spadone</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Ascia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Ascia</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
-              <tr data-name="Mazza"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Mazza</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Lancia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Lancia</td><td class="rightPack"><button class="mini" data-step="wmod-Lancia" data-delta="-1">−</button><input class="modCompact" id="wmod-Lancia" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Lancia" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Spadone"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spadone</td><td class="rightPack"><button class="mini" data-step="wmod-Spadone" data-delta="-1">−</button><input class="modCompact" id="wmod-Spadone" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Spadone" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Ascia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Ascia</td><td class="rightPack"><button class="mini" data-step="wmod-Ascia" data-delta="-1">−</button><input class="modCompact" id="wmod-Ascia" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Ascia" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
+              <tr data-name="Mazza"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Mazza</td><td class="rightPack"><button class="mini" data-step="wmod-Mazza" data-delta="-1">−</button><input class="modCompact" id="wmod-Mazza" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Mazza" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <footer>Salvataggi locali su questo dispositivo. Nessun dato inviato altrove.</footer>
+    <footer style="text-align:center; color:var(--muted); font-size:12px">Salvataggi locali su questo dispositivo. Nessun dato inviato altrove.</footer>
   </div>
+
+  <div class="toast" id="toast">Massimo 2 armi equipaggiate</div>
 
 <script>
 (function(){
-  const SKEY = 'lw_sheet_state_v4';
-  const HKEY = 'lw_sheet_hist_v4';
+  const SKEY = 'lw_sheet_state_v5';
+  const HKEY = 'lw_sheet_hist_v5';
 
   const q = (sel, root=document) => root.querySelector(sel);
   const qa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
@@ -215,7 +245,7 @@
   // DOM refs
   const cmbTotal = q('#cmbTotal');
   const cmbBase  = q('#cmbBase');
-  const cmbW1    = q('#cmbW1');
+  const cmbW1    = q('#cmbW1'); // disciplina kai only
   const cmbW2    = q('#cmbW2');
   const cmbMods  = [q('#cmbM1'), q('#cmbM2'), q('#cmbM3')];
 
@@ -227,11 +257,34 @@
   const armLine2 = q('#armLine2');
 
   const autosave = q('#autosave');
+  const autosaveMins = q('#autosaveMins');
   const saveNow  = q('#saveNow');
   const lastSave = q('#lastSave');
   const restore1 = q('#restore1');
   const restore2 = q('#restore2');
   const restore3 = q('#restore3');
+  const toastEl  = q('#toast');
+  const muteToggle = q('#muteToggle');
+
+  // Sound (WebAudio simple)
+  let ac;
+  function beep(freq=660, dur=80, type='sine', vol=0.05){
+    if(muteToggle.checked) return;
+    try{
+      ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+      const o = ac.createOscillator(); const g = ac.createGain();
+      o.type = type; o.frequency.value = freq; g.gain.value = vol;
+      o.connect(g); g.connect(ac.destination);
+      o.start();
+      setTimeout(()=>{ o.stop(); }, dur);
+    }catch(e){}
+  }
+
+  function toast(msg){
+    toastEl.textContent = msg || 'Avviso';
+    toastEl.classList.add('show');
+    setTimeout(()=>toastEl.classList.remove('show'), 1500);
+  }
 
   // Collect weapon rows
   const weaponRows = qa('table.weaponList tbody tr');
@@ -248,6 +301,7 @@
       row.querySelector('input[data-act="disc"]').checked = !!weaponState[i].fav;
       row.querySelector('input[data-act="eq"]').checked   = !!weaponState[i].eq;
       row.querySelector('input[data-act="mod"]').value    = weaponState[i].mod || 0;
+      row.classList.toggle('kaiFav', !!weaponState[i].fav);
     });
   }
 
@@ -266,11 +320,16 @@
   }
 
   function computeWeaponMods(){
-    const eq = weaponState.filter(w=>w.eq);
-    const sum = eq.reduce((s,w)=> s + (Number(w.mod)||0) + (w.fav ? 2 : 0), 0);
-    cmbW1.value = sum;
-    cmbW2.value = 0;
-    return sum;
+    // Disciplina Kai box (cmbW1) shows ONLY the +2 from the selected disciplined weapon if it's also equipped.
+    const discIndex = weaponState.findIndex(w=>w.fav);
+    let discBonus = 0;
+    if(discIndex>=0 && weaponState[discIndex].eq) discBonus = 2;
+    cmbW1.value = discBonus;
+
+    // Weapons' individual "mod" values are applied only if that weapon is equipped.
+    const weaponMods = weaponState.filter(w=>w.eq).reduce((s,w)=> s + (Number(w.mod)||0), 0);
+
+    return discBonus + weaponMods;
   }
 
   function computeCmbTotal(){
@@ -280,7 +339,7 @@
     const eqCount = weaponState.filter(w=>w.eq).length;
     const noWeaponMalus = eqCount===0 ? -4 : 0;
     const total = base + manual + weaps + noWeaponMalus;
-    cmbTotal.textContent = total;
+    q('#cmbTotal').textContent = total;
   }
 
   function computeEndurance(){
@@ -296,23 +355,34 @@
     updateArmamentoLines();
   }
 
-  // Enforce "only one disciplina" in UI
+  // Enforce "only one disciplina" and "max 2 equip"
   document.addEventListener('change', (e)=>{
     const t = e.target;
     if(!(t instanceof HTMLInputElement)) return;
     if(t.matches('input[data-act="disc"]')){
-      // uncheck all others
-      weaponRows.forEach(row => {
-        const cb = row.querySelector('input[data-act="disc"]');
-        if(cb!==t) cb.checked = false;
-      });
+      weaponRows.forEach(row => { const cb = row.querySelector('input[data-act="disc"]'); if(cb!==t) cb.checked = false; });
+      beep(720,70,'triangle');
+    }
+    if(t.matches('input[data-act="eq"]')){
+      const checked = weaponRows.filter(r=>r.querySelector('input[data-act="eq"]').checked);
+      if(checked.length>2){
+        t.checked = false;
+        toast('Massimo 2 armi equipaggiate');
+        beep(240,120,'square');
+      }else{
+        beep(600,60,'sine');
+      }
+    }
+    if(t.matches('input[data-act="mod"]')){
+      beep(500,40,'sine');
     }
     syncStateFromRows();
     syncUI();
     markDirty();
+    syncRowsFromState();
   });
 
-  // Stepper buttons
+  // Stepper buttons (±) — avoid focusing input to not pop the keyboard
   document.addEventListener('click', (e)=>{
     const el = e.target.closest('button.mini[data-step]');
     if(!el) return;
@@ -323,6 +393,7 @@
     const cur = Number(inp.value||0);
     inp.value = cur + delta;
     inp.dispatchEvent(new Event('input', {bubbles:true}));
+    beep(delta>0?700:420,50,'sine');
   }, {passive:true});
 
   // Inputs
@@ -346,7 +417,10 @@
       endCur: Number(endCur.value||0),
       endTot: Number(endTot.value||0),
       endMods: endMods.map(el=>Number(el.value||0)),
-      weapons: weaponState.map(w=>({...w}))
+      weapons: weaponState.map(w=>({...w})),
+      autosave: autosave.checked,
+      autosaveMins: Number(autosaveMins.value||5),
+      mute: muteToggle.checked
     };
   }
   function writeState(s){
@@ -361,9 +435,13 @@
         row.querySelector('input[data-act="disc"]').checked = !!w.fav;
         row.querySelector('input[data-act="eq"]').checked   = !!w.eq;
         row.querySelector('input[data-act="mod"]').value    = w.mod || 0;
+        row.classList.toggle('kaiFav', !!w.fav);
         weaponState[i] = { name: weaponState[i].name, fav:!!w.fav, eq:!!w.eq, mod:Number(w.mod||0) };
       });
     }
+    autosave.checked = !!s.autosave;
+    if(s.autosaveMins){ autosaveMins.value = String(s.autosaveMins); }
+    muteToggle.checked = !!s.mute;
     syncUI();
   }
 
@@ -408,6 +486,7 @@
       writeState(item.s);
       localStorage.setItem(SKEY, JSON.stringify(item.s));
       lastSave.textContent = 'ripristino ' + new Date(item.ts).toLocaleTimeString();
+      beep(520,70,'sine');
     });
   });
 
@@ -416,11 +495,13 @@
   function startAutosave(){
     if(timer) clearInterval(timer);
     if(autosave.checked){
-      timer = setInterval(()=>{ if(dirty) saveState(); }, 300000); // 5 min
+      const mins = Math.max(1, Number(autosaveMins.value||5));
+      timer = setInterval(()=>{ if(dirty) saveState(); }, mins*60*1000);
     }
   }
-  autosave.addEventListener('change', startAutosave);
-  saveNow.addEventListener('click', ()=>{ saveState(); });
+  autosave.addEventListener('change', ()=>{ startAutosave(); beep(480,60,'sine'); });
+  autosaveMins.addEventListener('change', ()=>{ startAutosave(); beep(560,60,'sine'); });
+  saveNow.addEventListener('click', ()=>{ saveState(); beep(680,80,'triangle'); });
   let dirty=false;
   function markDirty(){ dirty=true; }
 
