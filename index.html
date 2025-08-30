@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Lupo Solitario — Foglio Battaglia v4</title>
+<meta name="theme-color" content="#1c1710">
+<style>
+  :root{
+    --bg:#1c1710; --panel:#231c13; --ink:#e8dec7; --muted:#b9ae95; --accent:#caa25d; --accent-dark:#8a6a2c;
+    --emerald:#34d399; --emerald-ink:#c8f3df; --ring:#caa25d55;
+    --rule:#6e5a3344; --paper:#1b160f;
+    --shadow:#00000066;
+    --mono: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
+    --serif: "Palatino Linotype", Palatino, "Times New Roman", Georgia, serif;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Helvetica, Arial;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 20% 0%, #2c2216 0, transparent 60%),
+      radial-gradient(1000px 700px at 100% 100%, #2a200f 0, transparent 70%),
+      var(--bg);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{ max-width: 1040px; margin:auto; padding:14px; display:grid; gap:14px }
+  header{ text-align:center; border-bottom:3px double #6e5a33; padding:8px 0 10px }
+  h1{ font-size: clamp(22px, 6vw, 34px); margin:0; font-variant: small-caps; letter-spacing:.06em }
+  .statusBar{
+    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; color:var(--muted); font-family:var(--sans); font-size:14px; 
+    margin-top:6px
+  }
+  .card{
+    background: var(--panel); border:1px solid var(--rule); border-radius:16px; padding:14px;
+    box-shadow: 0 14px 40px var(--shadow), inset 0 0 60px #00000033;
+  }
+  .h2{ font-size:18px; font-variant: small-caps; letter-spacing:.06em; margin:0 0 8px }
+  .grid{ display:grid; gap:14px }
+  @media (min-width: 880px){ .grid.cols-2{ grid-template-columns: 1.1fr 1fr; } }
+  .panel{
+    border:1px solid var(--rule); border-radius:12px; background: var(--paper);
+    box-shadow: inset 0 0 40px #00000045; padding:12px;
+  }
+  .bigValue{
+    text-align:center; font-weight:900; color:var(--emerald); font-family:var(--mono);
+    font-size: clamp(48px, 12vw, 80px); line-height:1; padding:8px 0; background:#17120b; border:1px solid var(--rule); border-radius:12px;
+    box-shadow: inset 0 0 0 1px #2f7f5d55;
+  }
+  .split{ display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:10px; }
+  .slash{ font-size: clamp(32px, 9vw, 54px); color:var(--muted); }
+  .boxLabel{ font-family:var(--sans); font-size:12px; color:var(--muted); text-align:center }
+  .stepper{ display:flex; gap:6px; align-items:center }
+  .mini{ padding:10px 12px; border-radius:10px; border:1px solid #6e5a3344; background:#2a2216; color:#f0e6cd; font-weight:800; touch-action: manipulation; }
+  input[type="number"]{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #6e5a3355; background:#1b160f; color:var(--emerald-ink); font-family:var(--mono);
+    box-shadow: inset 0 0 0 1px #2f7f5d55; appearance:textfield; font-size:18px;
+  }
+  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button{ display:none }
+  .modsGrid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; }
+  .modBox{ text-align:center }
+  .modBox label{ display:block; font-family:var(--sans); font-size:11px; color:var(--muted); margin-bottom:4px }
+  .modBox input{ text-align:center }
+  .modBox.readonly input{ opacity:.85; background:#17120b; pointer-events:none }
+  .row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+  .btn{ border:2px solid var(--accent-dark); background:linear-gradient(180deg, #7a6330, #5a4620); color:#f2e6c7;
+        padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; text-transform: uppercase; letter-spacing:.6px; }
+  .btn:active{ transform: translateY(1px) }
+  .weaponList{ width:100%; border-collapse:collapse }
+  .weaponList th, .weaponList td{ border-bottom:1px solid var(--rule); padding:8px }
+  .weaponList th{ background:#2a2216; text-align:left; font-variant: small-caps }
+  .wName{ font-weight:700 }
+  .wDisc{ width:40px; text-align:center }
+  .rightPack{ text-align:right }
+  .modCompact{ max-width:80px; display:inline-block; vertical-align:middle }
+  .equipCompact{ display:inline-block; width:28px; text-align:center }
+  .small{ font-size:12px; color:var(--muted) }
+  .armBox{ background:#17120b; border:1px solid var(--rule); border-radius:10px; padding:8px }
+  .armLine{ padding:8px; border:1px dashed var(--rule); border-radius:8px; min-height:36px; display:flex; align-items:center; font-family:var(--sans) }
+  .armLine + .armLine{ margin-top:6px }
+  .hint{ color:var(--muted); font-size:12px; margin-top:6px }
+  footer{ color:var(--muted); font-size:12px; text-align:center }
+  .kaiGrid{ display:grid; gap:10px; }
+  @media (min-width: 860px){ .kaiGrid{ grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Lupo Solitario — Foglio Battaglia v4</h1>
+      <div class="statusBar">
+        <label><input type="checkbox" id="autosave" checked> Autosalvataggio (5 min)</label>
+        <button class="btn" id="saveNow">Salva ora</button>
+        <span class="small">Ultimo salvataggio: <span id="lastSave">—</span></span>
+        <span class="small">Ripristina: </span>
+        <button class="btn" id="restore1">Slot 1</button>
+        <button class="btn" id="restore2">Slot 2</button>
+        <button class="btn" id="restore3">Slot 3</button>
+      </div>
+    </header>
+
+    <div class="grid cols-2">
+      <!-- Combattività -->
+      <section class="card">
+        <h2 class="h2">Combattività</h2>
+        <div class="panel">
+          <div class="boxLabel">Totale</div>
+          <div id="cmbTotal" class="bigValue">0</div>
+          <div class="boxLabel">Base</div>
+          <div class="stepper">
+            <button class="mini" type="button" data-step="cmbBase" data-delta="-1">−</button>
+            <input type="number" id="cmbBase" value="0" inputmode="numeric" pattern="[0-9]*">
+            <button class="mini" type="button" data-step="cmbBase" data-delta="1">+</button>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:10px">
+          <div class="h2" style="margin:0 0 6px">Modificatori</div>
+          <div class="modsGrid">
+            <div class="modBox readonly"><label>Armi (somma)</label><input type="number" id="cmbW1" value="0" readonly></div>
+            <div class="modBox readonly"><label>—</label><input type="number" id="cmbW2" value="0" readonly></div>
+            <div class="modBox"><label>Mod A</label><input type="number" id="cmbM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod B</label><input type="number" id="cmbM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod C</label><input type="number" id="cmbM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+          </div>
+          <div class="hint">Se nessuna arma è equipaggiata: malus automatico <strong>−4</strong>.</div>
+        </div>
+      </section>
+
+      <!-- Resistenza -->
+      <section class="card">
+        <h2 class="h2">Resistenza</h2>
+        <div class="panel">
+          <div class="boxLabel">Attuale / Totale</div>
+          <div class="split">
+            <div>
+              <div class="stepper">
+                <button class="mini" type="button" data-step="endCur" data-delta="-1">−</button>
+                <input type="number" id="endCur" value="0" inputmode="numeric" pattern="[0-9]*">
+                <button class="mini" type="button" data-step="endCur" data-delta="1">+</button>
+              </div>
+            </div>
+            <div class="slash">/</div>
+            <div><input type="number" id="endTot" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:10px">
+          <div class="h2" style="margin:0 0 6px">Modificatori Resistenza</div>
+          <div class="modsGrid">
+            <div class="modBox"><label>Mod 1</label><input type="number" id="endM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod 2</label><input type="number" id="endM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod 3</label><input type="number" id="endM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod 4</label><input type="number" id="endM4" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="modBox"><label>Mod 5</label><input type="number" id="endM5" value="0" inputmode="numeric" pattern="[0-9]*"></div>
+          </div>
+          <div class="hint">L’Attuale è il valore modificabile; i mod si sommano temporaneamente.</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Armamento -->
+    <section class="card">
+      <h2 class="h2">Armamento</h2>
+      <div class="panel">
+        <div class="row">
+          <div class="armBox" style="flex:1">
+            <div class="armLine" id="armLine1">—</div>
+            <div class="armLine" id="armLine2">—</div>
+          </div>
+          <div class="row" style="min-width: 240px; justify-content:center">
+            <span class="small">Seleziona le armi da usare e indica i loro Mod.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:10px">
+        <h2 class="h2" style="margin:0 0 6px">Disciplina della Scherma Kai</h2>
+        <div class="small" style="margin-bottom:8px">Seleziona <strong>una sola</strong> arma per la Disciplina (Kai) — vale <strong>+2</strong> se anche “Equip”. A destra inserisci <em>Mod</em> ed eventualmente spunta <em>Equip</em> (nessun limite).</div>
+        <div class="kaiGrid">
+          <table class="weaponList" id="weaponLeft">
+            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th>Mod</th><th>Equip</th></tr></thead>
+            <tbody>
+              <tr data-name="Asta"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Asta</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Spada"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spada</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Daga"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Daga</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Martello"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Martello</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Pugnale"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Pugnale</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+            </tbody>
+          </table>
+          <table class="weaponList" id="weaponRight">
+            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th>Mod</th><th>Equip</th></tr></thead>
+            <tbody>
+              <tr data-name="Lancia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Lancia</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Spadone"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spadone</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Ascia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Ascia</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+              <tr data-name="Mazza"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Mazza</td><td><input class="modCompact" type="number" value="0" data-act="mod"></td><td class="equipCompact"><input type="checkbox" data-act="eq"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer>Salvataggi locali su questo dispositivo. Nessun dato inviato altrove.</footer>
+  </div>
+
+<script>
+(function(){
+  const SKEY = 'lw_sheet_state_v4';
+  const HKEY = 'lw_sheet_hist_v4';
+
+  const q = (sel, root=document) => root.querySelector(sel);
+  const qa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+  // DOM refs
+  const cmbTotal = q('#cmbTotal');
+  const cmbBase  = q('#cmbBase');
+  const cmbW1    = q('#cmbW1');
+  const cmbW2    = q('#cmbW2');
+  const cmbMods  = [q('#cmbM1'), q('#cmbM2'), q('#cmbM3')];
+
+  const endCur   = q('#endCur');
+  const endTot   = q('#endTot');
+  const endMods  = [q('#endM1'), q('#endM2'), q('#endM3'), q('#endM4'), q('#endM5')];
+
+  const armLine1 = q('#armLine1');
+  const armLine2 = q('#armLine2');
+
+  const autosave = q('#autosave');
+  const saveNow  = q('#saveNow');
+  const lastSave = q('#lastSave');
+  const restore1 = q('#restore1');
+  const restore2 = q('#restore2');
+  const restore3 = q('#restore3');
+
+  // Collect weapon rows
+  const weaponRows = qa('table.weaponList tbody tr');
+  // Local state mirror
+  const weaponState = Array.from(weaponRows).map(row => ({
+    name: row.getAttribute('data-name'),
+    fav:  false, // Disciplina
+    eq:   false,
+    mod:  0
+  }));
+
+  function syncRowsFromState(){
+    weaponRows.forEach((row, i) => {
+      row.querySelector('input[data-act="disc"]').checked = !!weaponState[i].fav;
+      row.querySelector('input[data-act="eq"]').checked   = !!weaponState[i].eq;
+      row.querySelector('input[data-act="mod"]').value    = weaponState[i].mod || 0;
+    });
+  }
+
+  function syncStateFromRows(){
+    weaponRows.forEach((row, i) => {
+      weaponState[i].fav = row.querySelector('input[data-act="disc"]').checked;
+      weaponState[i].eq  = row.querySelector('input[data-act="eq"]').checked;
+      weaponState[i].mod = Number(row.querySelector('input[data-act="mod"]').value || 0);
+    });
+  }
+
+  function updateArmamentoLines(){
+    const eq = weaponState.filter(w=>w.eq).map(w=>w.name);
+    armLine1.textContent = eq[0] || '—';
+    armLine2.textContent = eq[1] || '—';
+  }
+
+  function computeWeaponMods(){
+    const eq = weaponState.filter(w=>w.eq);
+    const sum = eq.reduce((s,w)=> s + (Number(w.mod)||0) + (w.fav ? 2 : 0), 0);
+    cmbW1.value = sum;
+    cmbW2.value = 0;
+    return sum;
+  }
+
+  function computeCmbTotal(){
+    const base = Number(cmbBase.value||0);
+    const manual = cmbMods.reduce((s,el)=>s + (Number(el.value)||0), 0);
+    const weaps = computeWeaponMods();
+    const eqCount = weaponState.filter(w=>w.eq).length;
+    const noWeaponMalus = eqCount===0 ? -4 : 0;
+    const total = base + manual + weaps + noWeaponMalus;
+    cmbTotal.textContent = total;
+  }
+
+  function computeEndurance(){
+    const cur = Number(endCur.value||0);
+    const mods = endMods.reduce((s,el)=>s + (Number(el.value)||0), 0);
+    const adjusted = cur + mods;
+    endCur.title = `Attuale con modificatori: ${adjusted}`;
+  }
+
+  function syncUI(){
+    computeCmbTotal();
+    computeEndurance();
+    updateArmamentoLines();
+  }
+
+  // Enforce "only one disciplina" in UI
+  document.addEventListener('change', (e)=>{
+    const t = e.target;
+    if(!(t instanceof HTMLInputElement)) return;
+    if(t.matches('input[data-act="disc"]')){
+      // uncheck all others
+      weaponRows.forEach(row => {
+        const cb = row.querySelector('input[data-act="disc"]');
+        if(cb!==t) cb.checked = false;
+      });
+    }
+    syncStateFromRows();
+    syncUI();
+    markDirty();
+  });
+
+  // Stepper buttons
+  document.addEventListener('click', (e)=>{
+    const el = e.target.closest('button.mini[data-step]');
+    if(!el) return;
+    e.preventDefault();
+    const id = el.getAttribute('data-step');
+    const delta = Number(el.getAttribute('data-delta'))||0;
+    const inp = document.getElementById(id);
+    const cur = Number(inp.value||0);
+    inp.value = cur + delta;
+    inp.dispatchEvent(new Event('input', {bubbles:true}));
+  }, {passive:true});
+
+  // Inputs
+  ;[cmbBase, ...cmbMods, endCur, endTot, ...endMods].forEach(inp=>{
+    inp.addEventListener('input', ()=>{ syncUI(); markDirty(); });
+  });
+
+  function nowStr(){
+    const d=new Date(); const p=n=>String(n).padStart(2,'0');
+    return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  }
+
+  // Save / Load
+  function readState(){
+    syncStateFromRows();
+    return {
+      cmbBase: Number(cmbBase.value||0),
+      cmbMods: cmbMods.map(el=>Number(el.value||0)),
+      cmbW1: Number(cmbW1.value||0),
+      cmbW2: Number(cmbW2.value||0),
+      endCur: Number(endCur.value||0),
+      endTot: Number(endTot.value||0),
+      endMods: endMods.map(el=>Number(el.value||0)),
+      weapons: weaponState.map(w=>({...w}))
+    };
+  }
+  function writeState(s){
+    cmbBase.value = s.cmbBase||0;
+    s.cmbMods?.forEach((v,i)=>{ if(cmbMods[i]) cmbMods[i].value = v; });
+    endCur.value = s.endCur||0;
+    endTot.value = s.endTot||0;
+    s.endMods?.forEach((v,i)=>{ if(endMods[i]) endMods[i].value = v; });
+    if(Array.isArray(s.weapons)){
+      weaponRows.forEach((row,i)=>{
+        const w = s.weapons[i]; if(!w) return;
+        row.querySelector('input[data-act="disc"]').checked = !!w.fav;
+        row.querySelector('input[data-act="eq"]').checked   = !!w.eq;
+        row.querySelector('input[data-act="mod"]').value    = w.mod || 0;
+        weaponState[i] = { name: weaponState[i].name, fav:!!w.fav, eq:!!w.eq, mod:Number(w.mod||0) };
+      });
+    }
+    syncUI();
+  }
+
+  function saveState(){
+    const s = readState();
+    localStorage.setItem(SKEY, JSON.stringify(s));
+    lastSave.textContent = nowStr();
+    // rotate snapshots (keep last 3)
+    let hist = [];
+    try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{ hist=[]; }
+    hist.push({ts: Date.now(), time: new Date().toLocaleString(), s});
+    while(hist.length>3) hist.shift();
+    localStorage.setItem(HKEY, JSON.stringify(hist));
+    updateRestoreButtons();
+    dirty=false;
+  }
+  function loadState(){
+    try{
+      const s = JSON.parse(localStorage.getItem(SKEY)||'{}');
+      if(s && Object.keys(s).length){ writeState(s); }
+      else { syncRowsFromState(); syncUI(); }
+    }catch{ syncRowsFromState(); syncUI(); }
+    updateRestoreButtons();
+  }
+  function updateRestoreButtons(){
+    let hist = [];
+    try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{ hist=[]; }
+    const slots = hist.slice(-3);
+    [restore1, restore2, restore3].forEach((btn,ix)=>{
+      const item = slots[ix];
+      if(item){ btn.textContent = `Slot ${ix+1} (${new Date(item.ts).toLocaleTimeString()})`; btn.disabled=false; }
+      else{ btn.textContent = `Slot ${ix+1}`; btn.disabled=true; }
+    });
+  }
+  [restore1, restore2, restore3].forEach((btn,ix)=>{
+    btn.addEventListener('click', ()=>{
+      let hist = [];
+      try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{}
+      const slots = hist.slice(-3);
+      const item = slots[ix];
+      if(!item) return;
+      writeState(item.s);
+      localStorage.setItem(SKEY, JSON.stringify(item.s));
+      lastSave.textContent = 'ripristino ' + new Date(item.ts).toLocaleTimeString();
+    });
+  });
+
+  // autosave / manual
+  let timer = null;
+  function startAutosave(){
+    if(timer) clearInterval(timer);
+    if(autosave.checked){
+      timer = setInterval(()=>{ if(dirty) saveState(); }, 300000); // 5 min
+    }
+  }
+  autosave.addEventListener('change', startAutosave);
+  saveNow.addEventListener('click', ()=>{ saveState(); });
+  let dirty=false;
+  function markDirty(){ dirty=true; }
+
+  // Init
+  loadState();
+  startAutosave();
+  window.addEventListener('beforeunload', ()=>{ if(dirty) saveState(); });
+})();
+</script>
+</body>
+</html>
