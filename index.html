@@ -1,515 +1,845 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Lupo Solitario — Foglio di Battaglia</title>
-<meta name="theme-color" content="#1c1710">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compagno di Lettura – Lupo Solitario</title>
 <style>
   :root{
-    --bg:#1c1710; --panel:#231c13; --ink:#e8dec7; --muted:#b9ae95; --accent:#caa25d; --accent-dark:#8a6a2c;
-    --emerald:#34d399; --emerald-ink:#c8f3df; --ring:#caa25d55;
-    --rule:#6e5a3344; --paper:#1b160f; --shadow:#00000066;
-    --mono: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
-    --serif: "Palatino Linotype", Palatino, "Times New Roman", Georgia, serif;
-    --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Helvetica, Arial;
-    --emerald-dim:#2b8d6d; --danger:#c24a4a; --gold:#caa25d;
+    --bg:#0f1115; --panel:#171a21; --ink:#e7eaf0; --muted:#aab1bf; --accent:#64b5f6; --danger:#f06292; --ok:#81c784; --warn:#ffb74d; --line:#232836;
   }
-  *{ box-sizing:border-box; }
-  html,body{ margin:0; }
-  body{
-    color: var(--ink);
-    background:
-      radial-gradient(1200px 600px at 20% 0%, #2c2216 0, transparent 60%),
-      radial-gradient(1000px 700px at 100% 100%, #2a200f 0, transparent 70%),
-      var(--bg);
-    font-family: var(--serif);
-    -webkit-font-smoothing: antialiased;
+  html,body{height:100%;}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;}
+  h1,h2{margin:0 0 .4rem 0}
+  h1{font-size:1.25rem}
+  h2{font-size:1.05rem;color:var(--muted)}
+  .wrap{max-width:1060px;margin:18px auto;padding:0 12px;}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(12,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+  .span-12{grid-column:span 12}
+  .span-8{grid-column:span 8}
+  .span-6{grid-column:span 6}
+  .span-4{grid-column:span 4}
+  .span-3{grid-column:span 3}
+  .row{display:flex;flex-wrap:wrap;gap:10px}
+  label{display:block;font-size:.86rem;color:var(--muted);margin-bottom:6px}
+  input[type="number"], input[type="text"], select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b0d12;color:var(--ink)}
+  input[type="checkbox"]{transform:scale(1.1);}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#11141b;color:var(--ink);cursor:pointer}
+  .btn:hover{border-color:#2a3142}
+  .btn.accent{background:#112033;border-color:#224566;color:#bfe1ff}
+  .btn.ok{background:#122117;border-color:#245834;color:#b8f6c5}
+  .btn.danger{background:#2a0f18;border-color:#5a1832;color:#ffb7cd}
+  .pill{display:inline-block;padding:.2rem .5rem;border-radius:999px;border:1px solid var(--line);background:#0c0f15;color:var(--muted);font-size:.8rem}
+  .muted{color:var(--muted)}
+  .hr{height:1px;background:var(--line);margin:12px 0}
+  .kpi{font-weight:700}
+  .list{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:flex;align-items:center;gap:6px;background:#0e1218;border:1px solid var(--line);border-radius:999px;padding:6px 10px}
+  .chip button{border:0;background:transparent;color:#9fb2ff;cursor:pointer}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .monosmall{font:600 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;color:#cfd6e6}
+  .small{font-size:.86rem;color:var(--muted)}
+  .danger-text{color:#ff94b2}
+  .good-text{color:#acebb5}
+  .warn-text{color:#ffd49a}
+  .table{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .table .head,.table .row{display:grid;grid-template-columns:repeat(7,1fr)}
+  .table .head{background:#0e1220;color:#90a4d4;font-weight:700}
+  .table .row:nth-child(odd){background:#0d1016}
+  .table .cell{padding:8px 10px;border-right:1px solid var(--line)}
+  .table .cell:last-child{border-right:0}
+  .right{text-align:right}
+  .center{text-align:center}
+  .sticky{position:sticky;top:10px}
+  @media (max-width: 920px){
+    .grid{grid-template-columns:repeat(6,1fr)}
+    .span-8{grid-column:span 6}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 6}
+    .span-3{grid-column:span 3}
   }
-  .wrap{ max-width: 1040px; margin:auto; padding:14px; display:grid; gap:14px }
-  header{ text-align:center; border-bottom:3px double #6e5a33; padding:8px 0 10px }
-  h1{ font-size: clamp(22px, 6vw, 36px); margin:0; font-variant: small-caps; letter-spacing:.06em }
-  .subtitle{ margin-top:2px; color:var(--muted); font-variant: small-caps; letter-spacing:.06em }
-  .toolbar{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin-top:10px }
-  .toolbar .btn{ padding:8px 10px }
-  .autosaveRow{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; color:var(--muted); font-family:var(--sans); font-size:14px }
-  select, .num{ background:#1b160f; border:1px solid var(--rule); color:var(--ink); border-radius:10px; padding:8px 10px; font-family:var(--sans) }
-  .card{
-    background: var(--panel); border:1px solid var(--rule); border-radius:16px; padding:14px;
-    box-shadow: 0 14px 40px var(--shadow), inset 0 0 60px #00000033;
-  }
-  .h2{ font-size:18px; font-variant: small-caps; letter-spacing:.06em; margin:0 0 8px }
-  .grid{ display:grid; gap:14px }
-  @media (min-width: 880px){ .grid.cols-2{ grid-template-columns: 1.1fr 1fr; } }
-  .panel{
-    border:1px solid var(--rule); border-radius:12px; background: var(--paper);
-    box-shadow: inset 0 0 40px #00000045; padding:12px;
-  }
-  /* Square-ish controls */
-  .square{ display:grid; grid-template-columns: auto 64px auto; align-items:center; gap:6px }
-  .square input[type="number"]{ width:64px }
-  .bigValue{
-    text-align:center; font-weight:900; color:var(--emerald); font-family:var(--mono);
-    font-size: clamp(44px, 12vw, 72px); line-height:1; padding:8px 0; background:#17120b; border:1px solid var(--rule); border-radius:12px;
-    box-shadow: inset 0 0 0 1px #2f7f5d55;
-  }
-  .split{ display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:10px; }
-  .slash{ font-size: clamp(28px, 9vw, 48px); color:var(--muted); }
-  .boxLabel{ font-family:var(--sans); font-size:12px; color:var(--muted); text-align:center }
-  .stepper{ display:flex; gap:6px; align-items:center }
-  .mini{ padding:10px 12px; border-radius:10px; border:1px solid #6e5a3344; background:#2a2216; color:#f0e6cd; font-weight:800; touch-action: manipulation; }
-  input[type="number"]{
-    width:100%; padding:10px 10px; border-radius:12px; border:1px solid #6e5a3355; background:#1b160f;
-    color:var(--emerald-ink); font-family:var(--mono); box-shadow: inset 0 0 0 1px #2f7f5d55; appearance:textfield; font-size:18px; text-align:center;
-  }
-  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button{ display:none }
-  .modsGrid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; }
-  .modBox{ text-align:center }
-  .modBox label{ display:block; font-family:var(--sans); font-size:11px; color:var(--muted); margin-bottom:4px }
-  .modBox input{ text-align:center }
-  .modBox.readonly input{ opacity:.85; background:#17120b; pointer-events:none }
-  .row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
-  .btn{ border:2px solid var(--accent-dark); background:linear-gradient(180deg, #7a6330, #5a4620); color:#f2e6c7;
-        padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; text-transform: uppercase; letter-spacing:.6px; }
-  .btn:active{ transform: translateY(1px) }
-  /* Armamento */
-  .armBox{ background:#17120b; border:1px solid var(--rule); border-radius:10px; padding:8px }
-  .armLine{ padding:8px; border:1px dashed var(--rule); border-radius:8px; min-height:36px; display:flex; align-items:center; font-family:var(--sans) }
-  .armLine + .armLine{ margin-top:6px }
-  .weaponList{ width:100%; border-collapse:collapse }
-  .weaponList th, .weaponList td{ border-bottom:1px solid var(--rule); padding:4px 6px } /* compact rows */
-  .weaponList th{ background:#2a2216; text-align:left; font-variant: small-caps }
-  .wName{ font-weight:700 }
-  .wDisc{ width:40px; text-align:center }
-  .rightPack{ text-align:right; white-space:nowrap }
-  .modCompact{ max-width:70px; display:inline-block; vertical-align:middle; text-align:center }
-  .equipCompact{ display:inline-block; width:28px; text-align:center }
-  .kaiGrid{ display:grid; gap:10px; }
-  @media (min-width: 860px){ .kaiGrid{ grid-template-columns: 1fr 1fr; } }
-  /* Toast */
-  .toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#2a2216; color:#f5e9cc; border:1px solid #6e5a33; padding:10px 14px; border-radius:10px; box-shadow:0 10px 30px #0008; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px) }
-  /* Mute */
-  .muteRow{ display:flex; gap:10px; justify-content:center; align-items:center; color:var(--muted); font-family:var(--sans); font-size:14px }
-  /* Subtle highlight for Disciplina row */
-  tr.kaiFav{ outline: 1px solid #2f7f5d88; background:#1c1710 }
+
+  .flash-ok{box-shadow:0 0 0 2px rgba(129,199,132,.35),0 0 18px rgba(129,199,132,.3)}
+  .flash-warn{box-shadow:0 0 0 2px rgba(255,183,77,.35),0 0 18px rgba(255,183,77,.3)}
+  .flash-danger{box-shadow:0 0 0 2px rgba(240,98,146,.45),0 0 22px rgba(240,98,146,.35)}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <h1>Lupo Solitario</h1>
-      <div class="subtitle">Foglio di Battaglia</div>
+    <div class="grid">
 
-      <!-- Toolbar row -->
-      <div class="toolbar">
-        <button class="btn" id="restore1">Slot 1</button>
-        <button class="btn" id="restore2">Slot 2</button>
-        <button class="btn" id="restore3">Slot 3</button>
-        <button class="btn" id="saveNow">Salva ora</button>
-        <span class="small">Ultimo salvataggio: <span id="lastSave">—</span></span>
+      <div class="card span-8">
+        <h1>Compagno di Lettura – Lupo Solitario</h1>
+        <div class="small">Interfaccia minimale per sostituire il Registro di Guerra: inserisci valori, gestisci zaino e armi, calcola automaticamente il <b>Rapporto di Forza</b>, estrai un numero dalla <b>Tabella del Destino</b> e registra i turni di combattimento. <span class="pill">Dati salvati in locale</span></div>
       </div>
 
-      <!-- Autosave row -->
-      <div class="autosaveRow">
-        <label><input type="checkbox" id="autosave" checked> Autosalvataggio</label>
-        <label>Intervallo
-          <select id="autosaveMins">
-            <option value="1">1 min</option>
-            <option value="3">3 min</option>
-            <option value="5" selected>5 min</option>
-            <option value="10">10 min</option>
-            <option value="30">30 min</option>
-          </select>
-        </label>
-      </div>
-      <div class="muteRow">
-        <label><input type="checkbox" id="muteToggle"> Muta suoni</label>
-      </div>
-    </header>
-
-    <div class="grid cols-2">
-      <!-- Combattività -->
-      <section class="card">
-        <h2 class="h2">Combattività</h2>
-        <div class="panel">
-          <div class="boxLabel">Totale</div>
-          <div id="cmbTotal" class="bigValue">0</div>
-          <div class="boxLabel">Base</div>
-          <div class="square">
-            <button class="mini" type="button" data-step="cmbBase" data-delta="-1">−</button>
-            <input class="num" type="number" id="cmbBase" value="0" inputmode="numeric" pattern="[0-9]*">
-            <button class="mini" type="button" data-step="cmbBase" data-delta="1">+</button>
-          </div>
-        </div>
-        <div class="panel" style="margin-top:10px">
-          <div class="h2" style="margin:0 0 6px">Modificatori</div>
-          <div class="modsGrid">
-            <div class="modBox readonly"><label>Disciplina (Kai)</label><input type="number" id="cmbW1" value="0" readonly></div>
-            <div class="modBox"><label>Talento</label><input type="number" id="cmbM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Oggetto</label><input type="number" id="cmbM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Circostanza</label><input type="number" id="cmbM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox readonly"><label>—</label><input type="number" id="cmbW2" value="0" readonly></div>
-          </div>
-          <div class="hint">Se nessuna arma è equipaggiata: malus automatico <strong>−4</strong>.</div>
-        </div>
-      </section>
-
-      <!-- Resistenza -->
-      <section class="card">
-        <h2 class="h2">Resistenza</h2>
-        <div class="panel">
-          <div class="boxLabel">Attuale / Totale</div>
-          <div class="split">
-            <div class="square">
-              <button class="mini" type="button" data-step="endCur" data-delta="-1">−</button>
-              <input class="num" type="number" id="endCur" value="0" inputmode="numeric" pattern="[0-9]*">
-              <button class="mini" type="button" data-step="endCur" data-delta="1">+</button>
-            </div>
-            <div class="slash">/</div>
-            <div class="square">
-              <button class="mini" type="button" data-step="endTot" data-delta="-1">−</button>
-              <input class="num" type="number" id="endTot" value="0" inputmode="numeric" pattern="[0-9]*">
-              <button class="mini" type="button" data-step="endTot" data-delta="1">+</button>
-            </div>
-          </div>
-        </div>
-        <div class="panel" style="margin-top:10px">
-          <div class="h2" style="margin:0 0 6px">Modificatori Resistenza</div>
-          <div class="modsGrid">
-            <div class="modBox"><label>Mod 1</label><input type="number" id="endM1" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod 2</label><input type="number" id="endM2" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod 3</label><input type="number" id="endM3" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod 4</label><input type="number" id="endM4" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="modBox"><label>Mod 5</label><input type="number" id="endM5" value="0" inputmode="numeric" pattern="[0-9]*"></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Armamento -->
-    <section class="card">
-      <h2 class="h2">Armamento</h2>
-      <div class="panel">
+      <div class="card span-4 sticky">
+        <h2>Stato Attuale</h2>
         <div class="row">
-          <div class="armBox" style="flex:1">
-            <div class="armLine" id="armLine1">—</div>
-            <div class="armLine" id="armLine2">—</div>
+          <div>
+            <div class="muted">Combattività effettiva</div>
+            <div class="kpi" id="kpiComb">—</div>
+            <div class="small" id="kpiCombBreak"></div>
           </div>
-          <div class="row" style="min-width: 240px; justify-content:center">
-            <span class="small">Massimo 2 armi equipaggiate.</span>
+          <div>
+            <div class="muted">Resistenza</div>
+            <div class="kpi" id="kpiRes">—</div>
+            <div class="small" id="kpiResMax"></div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="row">
+          <button class="btn ok" id="btnSalva">💾 Salva</button>
+          <button class="btn" id="btnEsporta">⬇️ Esporta</button>
+          <label class="btn" for="importFile">⬆️ Importa</label>
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+          <label class="btn" id="btnSuoni">🔊 Suoni: ON</label>
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Setup iniziale</h2>
+        <div class="cols">
+          <div>
+            <label>Nome (opzionale)</label>
+            <input id="pgNome" type="text" placeholder="Lupo Solitario" />
+          </div>
+          <div>
+            <label>Libro (opzionale)</label>
+            <input id="pgLibro" type="text" placeholder="1 – I Signori delle Tenebre" />
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <label>Combattività base</label>
+            <input id="pgCombBase" type="number" inputmode="numeric" />
+          </div>
+          <div>
+            <label>Resistenza iniziale</label>
+            <input id="pgResMax" type="number" inputmode="numeric" />
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnRollComb">🎲 Estrai (0–9) per Comb.</button>
+          <button class="btn" id="btnRollRes">🎲 Estrai (0–9) per Res.</button>
+          <div class="pill">Nota: molte edizioni usano 10 + (0–9) per Comb e 20 + (0–9) per Res.</div>
+        </div>
+        <div class="row">
+          <button class="btn ok" id="btnGuarigione">+1 Res (Guarigione)</button>
+          <button class="btn danger" id="btnPasto">🍞 Mangia un Pasto</button>
+          <span class="small" id="helpPasto">Se non hai pasti quando richiesto: -3 Res</span>
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Discipline Kai (scegline 5)</h2>
+        <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:8px">
+          <label><input type="checkbox" id="dCaccia"> Caccia</label>
+          <label><input type="checkbox" id="dGuarigione"> Guarigione</label>
+          <label><input type="checkbox" id="dOrientamento"> Orientamento</label>
+          <label><input type="checkbox" id="dMimetismo"> Mimetismo</label>
+          <label><input type="checkbox" id="dSestoSenso"> Sesto Senso</label>
+          <label><input type="checkbox" id="dScherma"> Scherma (arma maestra)</label>
+          <label><input type="checkbox" id="dPsicolaser"> Psicolaser (+2 se non immune)</label>
+          <label><input type="checkbox" id="dPsicoschermo"> Psicoschermo (annulla -2 mentale)</label>
+          <label><input type="checkbox" id="dAffAnimale"> Affinità Animale</label>
+          <label><input type="checkbox" id="dTelecinesi"> Telecinesi</label>
+        </div>
+        <div class="cols">
+          <div>
+            <label>Arma maestra (se Scherma)</label>
+            <select id="armaMaestra">
+              <option value="">— nessuna —</option>
+              <option value="pugnale">Pugnale</option>
+              <option value="lancia">Lancia</option>
+              <option value="mazza">Mazza</option>
+              <option value="daga">Daga</option>
+              <option value="spada">Spada</option>
+              <option value="ascia">Ascia</option>
+              <option value="martello">Martello da guerra</option>
+              <option value="spadone">Spadone</option>
+              <option value="asta">Asta</option>
+            </select>
+          </div>
+          <div>
+            <label>Note Discipline</label>
+            <input id="discipNote" type="text" placeholder="Annotazioni utili" />
           </div>
         </div>
       </div>
 
-      <div class="panel" style="margin-top:10px">
-        <h2 class="h2" style="margin:0 0 6px">Disciplina della Scherma Kai</h2>
-        <div class="small" style="margin-bottom:8px">Spunta <strong>una sola</strong> arma come Disciplina (Kai) — ottieni <strong>+2</strong> se anche “Equip”. A destra imposta il <em>Mod</em> e usa ± o input. Righe più compatte.</div>
-        <div class="kaiGrid">
-          <table class="weaponList" id="weaponLeft">
-            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th class="rightPack" colspan="2">Mod &nbsp; Equip.</th></tr></thead>
-            <tbody>
-              <tr data-name="Asta"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Asta</td><td class="rightPack"><button class="mini" data-step="wmod-Asta" data-delta="-1">−</button><input class="modCompact" id="wmod-Asta" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Asta" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Spada"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spada</td><td class="rightPack"><button class="mini" data-step="wmod-Spada" data-delta="-1">−</button><input class="modCompact" id="wmod-Spada" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Spada" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Daga"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Daga</td><td class="rightPack"><button class="mini" data-step="wmod-Daga" data-delta="-1">−</button><input class="modCompact" id="wmod-Daga" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Daga" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Martello"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Martello</td><td class="rightPack"><button class="mini" data-step="wmod-Martello" data-delta="-1">−</button><input class="modCompact" id="wmod-Martello" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Martello" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Pugnale"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Pugnale</td><td class="rightPack"><button class="mini" data-step="wmod-Pugnale" data-delta="-1">−</button><input class="modCompact" id="wmod-Pugnale" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Pugnale" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-            </tbody>
-          </table>
-          <table class="weaponList" id="weaponRight">
-            <thead><tr><th class="wDisc">Disc.</th><th>Arma</th><th class="rightPack" colspan="2">Mod &nbsp; Equip.</th></tr></thead>
-            <tbody>
-              <tr data-name="Lancia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Lancia</td><td class="rightPack"><button class="mini" data-step="wmod-Lancia" data-delta="-1">−</button><input class="modCompact" id="wmod-Lancia" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Lancia" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Spadone"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Spadone</td><td class="rightPack"><button class="mini" data-step="wmod-Spadone" data-delta="-1">−</button><input class="modCompact" id="wmod-Spadone" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Spadone" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Ascia"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Ascia</td><td class="rightPack"><button class="mini" data-step="wmod-Ascia" data-delta="-1">−</button><input class="modCompact" id="wmod-Ascia" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Ascia" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-              <tr data-name="Mazza"><td class="wDisc"><input type="checkbox" data-act="disc"></td><td class="wName">Mazza</td><td class="rightPack"><button class="mini" data-step="wmod-Mazza" data-delta="-1">−</button><input class="modCompact" id="wmod-Mazza" type="number" value="0" data-act="mod"><button class="mini" data-step="wmod-Mazza" data-delta="1">+</button>&nbsp;<span class="equipCompact"><input type="checkbox" data-act="eq"></span></td></tr>
-            </tbody>
-          </table>
+      <div class="card span-6">
+        <h2>Armamento (max 2)</h2>
+        <div class="cols">
+          <div>
+            <label>Arma 1</label>
+            <input id="arma1" type="text" placeholder="es. Spada" />
+          </div>
+          <div>
+            <label>Arma 2</label>
+            <input id="arma2" type="text" placeholder="es. Pugnale" />
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <label>Arma in uso nello scontro</label>
+            <input id="armaInUso" type="text" placeholder="deve essere tra le due sopra" />
+          </div>
+          <div>
+            <label>Combatti disarmato</label>
+            <select id="disarmato">
+              <option value="no">No</option>
+              <option value="si">Sì (−4 Comb.)</option>
+            </select>
+          </div>
+        </div>
+        <div class="small">Se usi un’arma della tua <b>Scherma</b>: +2 Comb. Se disarmato: −4 Comb.</div>
+      </div>
+
+      <div class="card span-6">
+        <h2>Zaino (max 8) & Borsa</h2>
+        <div class="cols">
+          <div>
+            <label>Pasti</label>
+            <div class="row">
+              <input id="pasti" type="number" inputmode="numeric" value="0" />
+              <button class="btn" id="btnPastiPlus">+1</button>
+              <button class="btn" id="btnPastiMinus">−1</button>
+            </div>
+          </div>
+          <div>
+            <label>Corone d’oro (max 50)</label>
+            <div class="row">
+              <input id="oro" type="number" inputmode="numeric" value="0" />
+              <button class="btn" id="btnOroPlus">+1</button>
+              <button class="btn" id="btnOroMinus">−1</button>
+            </div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="stack">
+          <div class="row">
+            <input id="zainoInput" type="text" placeholder="Aggiungi oggetto (max 8)" />
+            <button class="btn" id="btnAddZaino">➕ Aggiungi</button>
+          </div>
+          <div id="zainoList" class="list"></div>
+        </div>
+        <div class="hr"></div>
+        <div class="stack">
+          <label>Oggetti speciali</label>
+          <div class="row">
+            <input id="specInput" type="text" placeholder="Aggiungi oggetto speciale" />
+            <button class="btn" id="btnAddSpec">➕ Aggiungi</button>
+          </div>
+          <div id="specList" class="list"></div>
         </div>
       </div>
-    </section>
 
-    <footer style="text-align:center; color:var(--muted); font-size:12px">Salvataggi locali su questo dispositivo. Nessun dato inviato altrove.</footer>
+      <div class="card span-12">
+        <h2>Combattimento</h2>
+        <div class="cols">
+          <div>
+            <label>Nemico – nome</label>
+            <input id="enmNome" type="text" placeholder="es. Giak" />
+          </div>
+          <div>
+            <label>Combattività nemico</label>
+            <input id="enmComb" type="number" inputmode="numeric" />
+          </div>
+          <div>
+            <label>Resistenza nemico</label>
+            <input id="enmRes" type="number" inputmode="numeric" />
+          </div>
+          <div>
+            <label>Immunità mentale</label>
+            <select id="enmImm">
+              <option value="no">No</option>
+              <option value="si">Sì (ignora Psicolaser)</option>
+            </select>
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <label>Modificatore personalizzato (bonus/malus temporaneo)</label>
+            <input id="combMod" type="number" value="0" />
+          </div>
+          <div>
+            <label>Psicolaser attivo in questo scontro?</label>
+            <select id="useMindblast">
+              <option value="auto">Auto (dipende da disciplina e immunità)</option>
+              <option value="si">Forza ON</option>
+              <option value="no">Forza OFF</option>
+            </select>
+          </div>
+          <div>
+            <label>Rapporto di Forza</label>
+            <div class="kpi" id="kpiRF">—</div>
+            <div class="small">(Comb. effettiva Lupo − Comb. Nemico, arrotondato alla colonna del libro)</div>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn accent" id="btnStart">▶️ Inizia/aggiorna scontro</button>
+          <button class="btn" id="btnRandom">🎲 Estrai Numero del Destino (0–9)</button>
+          <div class="pill">Numero del Destino: <b id="rnd">—</b></div>
+        </div>
+        <div class="cols">
+          <div>
+            <label>Danni al Nemico (da Tabella Risultati)</label>
+            <input id="dmgN" type="number" value="0" />
+          </div>
+          <div>
+            <label>Danni a Lupo Solitario (da Tabella Risultati)</label>
+            <input id="dmgLS" type="number" value="0" />
+          </div>
+          <div class="stack">
+            <label>&nbsp;</label>
+            <div class="row">
+              <button class="btn ok" id="btnApplica">✅ Applica turno</button>
+              <button class="btn danger" id="btnFuga">🏃‍♂️ Fuga (regole libro)</button>
+            </div>
+          </div>
+        </div>
+        <div class="small">Nota: questa versione <b>non</b> effettua (ancora) il lookup automatico della Tabella di Risultati; inserisci qui i due numeri indicati dal libro in base a Rapporto di Forza e Numero del Destino. Tutto il resto è automatizzato (calcolo Rapporto, aggiornamento Resistenze e registro).</div>
+        <div class="hr"></div>
+        <div class="table" id="log">
+          <div class="head">
+            <div class="cell">Turno</div>
+            <div class="cell">Nemico</div>
+            <div class="cell">Rapporto</div>
+            <div class="cell"># Destino</div>
+            <div class="cell right">Danni N</div>
+            <div class="cell right">Danni LS</div>
+            <div class="cell center">Esito</div>
+          </div>
+          <div id="logBody"></div>
+        </div>
+      </div>
+
+      <div class="card span-12">
+        <h2>Tabella del Destino – estrazione rapida</h2>
+        <div class="small">Clicca in qualsiasi punto per ottenere un numero 0–9 (simula puntare il dito a caso). Puoi anche scrivere direttamente nella casella sopra.</div>
+        <canvas id="destinoCanvas" width="780" height="260" style="max-width:100%;border-radius:10px;border:1px solid var(--line);background:#0c1018"></canvas>
+      </div>
+
+    </div>
   </div>
-
-  <div class="toast" id="toast">Massimo 2 armi equipaggiate</div>
 
 <script>
 (function(){
-  const SKEY = 'lw_sheet_state_v5';
-  const HKEY = 'lw_sheet_hist_v5';
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+  const SKEY = 'lw_companion_v1';
+  let turn = 0; // combat rounds counter
 
-  const q = (sel, root=document) => root.querySelector(sel);
-  const qa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  // helpers
+  const clamp = (n,min,max)=> Math.max(min, Math.min(max, n));
+  const num = (v)=> Number.isFinite(+v) ? +v : 0;
+  const toast = (msg)=> console.log('[INFO]', msg);
+  function flash(el, cls){ if(!el) return; el.classList.add(cls); setTimeout(()=>el.classList.remove(cls),400); }
 
-  // DOM refs
-  const cmbTotal = q('#cmbTotal');
-  const cmbBase  = q('#cmbBase');
-  const cmbW1    = q('#cmbW1'); // disciplina kai only
-  const cmbW2    = q('#cmbW2');
-  const cmbMods  = [q('#cmbM1'), q('#cmbM2'), q('#cmbM3')];
-
-  const endCur   = q('#endCur');
-  const endTot   = q('#endTot');
-  const endMods  = [q('#endM1'), q('#endM2'), q('#endM3'), q('#endM4'), q('#endM5')];
-
-  const armLine1 = q('#armLine1');
-  const armLine2 = q('#armLine2');
-
-  const autosave = q('#autosave');
-  const autosaveMins = q('#autosaveMins');
-  const saveNow  = q('#saveNow');
-  const lastSave = q('#lastSave');
-  const restore1 = q('#restore1');
-  const restore2 = q('#restore2');
-  const restore3 = q('#restore3');
-  const toastEl  = q('#toast');
-  const muteToggle = q('#muteToggle');
-
-  // Sound (WebAudio simple)
-  let ac;
-  function beep(freq=660, dur=80, type='sine', vol=0.05){
-    if(muteToggle.checked) return;
-    try{
-      ac = ac || new (window.AudioContext||window.webkitAudioContext)();
-      const o = ac.createOscillator(); const g = ac.createGain();
-      o.type = type; o.frequency.value = freq; g.gain.value = vol;
-      o.connect(g); g.connect(ac.destination);
-      o.start();
-      setTimeout(()=>{ o.stop(); }, dur);
-    }catch(e){}
-  }
-
-  function toast(msg){
-    toastEl.textContent = msg || 'Avviso';
-    toastEl.classList.add('show');
-    setTimeout(()=>toastEl.classList.remove('show'), 1500);
-  }
-
-  // Collect weapon rows
-  const weaponRows = qa('table.weaponList tbody tr');
-  // Local state mirror
-  const weaponState = Array.from(weaponRows).map(row => ({
-    name: row.getAttribute('data-name'),
-    fav:  false, // Disciplina
-    eq:   false,
-    mod:  0
-  }));
-
-  function syncRowsFromState(){
-    weaponRows.forEach((row, i) => {
-      row.querySelector('input[data-act="disc"]').checked = !!weaponState[i].fav;
-      row.querySelector('input[data-act="eq"]').checked   = !!weaponState[i].eq;
-      row.querySelector('input[data-act="mod"]').value    = weaponState[i].mod || 0;
-      row.classList.toggle('kaiFav', !!weaponState[i].fav);
-    });
-  }
-
-  function syncStateFromRows(){
-    weaponRows.forEach((row, i) => {
-      weaponState[i].fav = row.querySelector('input[data-act="disc"]').checked;
-      weaponState[i].eq  = row.querySelector('input[data-act="eq"]').checked;
-      weaponState[i].mod = Number(row.querySelector('input[data-act="mod"]').value || 0);
-    });
-  }
-
-  function updateArmamentoLines(){
-    const eq = weaponState.filter(w=>w.eq).map(w=>w.name);
-    armLine1.textContent = eq[0] || '—';
-    armLine2.textContent = eq[1] || '—';
-  }
-
-  function computeWeaponMods(){
-    // Disciplina Kai box (cmbW1) shows ONLY the +2 from the selected disciplined weapon if it's also equipped.
-    const discIndex = weaponState.findIndex(w=>w.fav);
-    let discBonus = 0;
-    if(discIndex>=0 && weaponState[discIndex].eq) discBonus = 2;
-    cmbW1.value = discBonus;
-
-    // Weapons' individual "mod" values are applied only if that weapon is equipped.
-    const weaponMods = weaponState.filter(w=>w.eq).reduce((s,w)=> s + (Number(w.mod)||0), 0);
-
-    return discBonus + weaponMods;
-  }
-
-  function computeCmbTotal(){
-    const base = Number(cmbBase.value||0);
-    const manual = cmbMods.reduce((s,el)=>s + (Number(el.value)||0), 0);
-    const weaps = computeWeaponMods();
-    const eqCount = weaponState.filter(w=>w.eq).length;
-    const noWeaponMalus = eqCount===0 ? -4 : 0;
-    const total = base + manual + weaps + noWeaponMalus;
-    q('#cmbTotal').textContent = total;
-  }
-
-  function computeEndurance(){
-    const cur = Number(endCur.value||0);
-    const mods = endMods.reduce((s,el)=>s + (Number(el.value)||0), 0);
-    const adjusted = cur + mods;
-    endCur.title = `Attuale con modificatori: ${adjusted}`;
-  }
-
-  function syncUI(){
-    computeCmbTotal();
-    computeEndurance();
-    updateArmamentoLines();
-  }
-
-  // Enforce "only one disciplina" and "max 2 equip"
-  document.addEventListener('change', (e)=>{
-    const t = e.target;
-    if(!(t instanceof HTMLInputElement)) return;
-    if(t.matches('input[data-act="disc"]')){
-      weaponRows.forEach(row => { const cb = row.querySelector('input[data-act="disc"]'); if(cb!==t) cb.checked = false; });
-      beep(720,70,'triangle');
+  function readState(){
+    const state = {
+      meta:{ nome:$('#pgNome').value.trim(), libro:$('#pgLibro').value.trim() },
+      base:{ comb:num($('#pgCombBase').value), resMax: num($('#pgResMax').value), resNow: num($('#kpiRes').textContent) },
+      disc:{
+        caccia: $('#dCaccia').checked,
+        guarigione: $('#dGuarigione').checked,
+        orientamento: $('#dOrientamento').checked,
+        mimetismo: $('#dMimetismo').checked,
+        sesto: $('#dSestoSenso').checked,
+        scherma: $('#dScherma').checked,
+        psicolaser: $('#dPsicolaser').checked,
+        psicoschermo: $('#dPsicoschermo').checked,
+        affanim: $('#dAffAnimale').checked,
+        telecinesi: $('#dTelecinesi').checked,
+        armaMaestra: $('#armaMaestra').value,
+        note: $('#discipNote').value.trim()
+      },
+      inv:{
+        arma1: $('#arma1').value.trim(),
+        arma2: $('#arma2').value.trim(),
+        armaInUso: $('#armaInUso').value.trim(),
+        disarmato: $('#disarmato').value === 'si',
+        pasti: clamp(num($('#pasti').value),0, 99),
+        oro: clamp(num($('#oro').value),0, 50),
+        zaino: $$('#zainoList .chip .txt').map(el=> el.textContent),
+        spec: $$('#specList .chip').map(el=> el.querySelector('.txt').textContent)
+      },
+      fight:{
+        nome: $('#enmNome').value.trim(), comb: num($('#enmComb').value), res: num($('#enmRes').value), imm: $('#enmImm').value==='si',
+        mod: num($('#combMod').value), useMind: $('#useMindblast').value
+      },
+      sys:{ rnd: $('#rnd').textContent === '—' ? null : num($('#rnd').textContent) }
     }
-    if(t.matches('input[data-act="eq"]')){
-      const checked = weaponRows.filter(r=>r.querySelector('input[data-act="eq"]').checked);
-      if(checked.length>2){
-        t.checked = false;
-        toast('Massimo 2 armi equipaggiate');
-        beep(240,120,'square');
-      }else{
-        beep(600,60,'sine');
+    return state;
+  }
+
+  function writeState(state){
+    if(!state) return;
+    $('#pgNome').value = state.meta?.nome || '';
+    $('#pgLibro').value = state.meta?.libro || '';
+    $('#pgCombBase').value = state.base?.comb ?? '';
+    $('#pgResMax').value = state.base?.resMax ?? '';
+    // restore inv lists
+    $('#zainoList').innerHTML = '';
+    (state.inv?.zaino||[]).forEach(addChip.bind(null,'#zainoList'));
+    $('#specList').innerHTML = '';
+    (state.inv?.spec||[]).forEach(addChip.bind(null,'#specList'));
+
+    $('#arma1').value = state.inv?.arma1 || '';
+    $('#arma2').value = state.inv?.arma2 || '';
+    $('#armaInUso').value = state.inv?.armaInUso || '';
+    $('#disarmato').value = state.inv?.disarmato ? 'si':'no';
+    $('#pasti').value = state.inv?.pasti ?? 0;
+    $('#oro').value = state.inv?.oro ?? 0;
+
+    // disciplines
+    $('#dCaccia').checked = !!state.disc?.caccia;
+    $('#dGuarigione').checked = !!state.disc?.guarigione;
+    $('#dOrientamento').checked = !!state.disc?.orientamento;
+    $('#dMimetismo').checked = !!state.disc?.mimetismo;
+    $('#dSestoSenso').checked = !!state.disc?.sesto;
+    $('#dScherma').checked = !!state.disc?.scherma;
+    $('#dPsicolaser').checked = !!state.disc?.psicolaser;
+    $('#dPsicoschermo').checked = !!state.disc?.psicoschermo;
+    $('#dAffAnimale').checked = !!state.disc?.affanim;
+    $('#dTelecinesi').checked = !!state.disc?.telecinesi;
+    $('#armaMaestra').value = state.disc?.armaMaestra || '';
+    $('#discipNote').value = state.disc?.note || '';
+
+    // fight
+    $('#enmNome').value = state.fight?.nome || '';
+    $('#enmComb').value = state.fight?.comb ?? '';
+    $('#enmRes').value = state.fight?.res ?? '';
+    $('#enmImm').value = state.fight?.imm ? 'si':'no';
+    $('#combMod').value = state.fight?.mod ?? 0;
+    $('#useMindblast').value = state.fight?.useMind || 'auto';
+
+    $('#rnd').textContent = state.sys?.rnd ?? '—';
+
+    // Resistenza
+    if (typeof state.base?.resNow === 'number') {
+        setRes(state.base.resNow, {manual: true});
+    } else if (typeof state.base?.resMax === 'number') {
+        setRes(state.base.resMax, {manual: true});
+    }
+
+    // KPIs
+    updateDerived();
+  }
+
+  function save(){
+    const s = readState();
+    s.base.resNow = num($('#kpiRes').textContent); // Salva il valore corrente del KPI
+    localStorage.setItem(SKEY, JSON.stringify(s));
+    toast('Salvato'); try{window.__SFX__.play('ok')}catch(_){ }; try{flash(document.querySelector('.sticky'), 'flash-ok')}catch(_){ }
+  }
+
+  function load(){
+    const raw = localStorage.getItem(SKEY);
+    if(!raw) return;
+    try{ writeState(JSON.parse(raw)); }catch(e){ console.warn(e); }
+  }
+
+  function addChip(listSel, txt){
+    if(!txt) return;
+    const box = document.createElement('span');
+    box.className = 'chip';
+    const span = document.createElement('span'); span.className='txt'; span.textContent = txt;
+    const btn = document.createElement('button'); btn.textContent = '✕';
+    btn.addEventListener('click',()=> box.remove());
+    box.appendChild(span); box.appendChild(btn);
+    $(listSel).appendChild(box);
+  }
+
+  function updateDerived(){
+    const s = readState();
+    // Effective Combat Skill
+    const hasMind = s.disc.psicolaser;
+    const mindToggle = s.fight.useMind;
+    const enemyImm = s.fight.imm;
+    const mindOk = (mindToggle==='si') || (mindToggle==='auto' && hasMind && !enemyImm);
+    const mindBonus = mindOk ? 2 : 0;
+
+    const usingWeapon = (s.inv.armaInUso||'').toLowerCase().trim();
+    const master = (s.disc.armaMaestra||'').toLowerCase();
+    const weaponBonus = (s.disc.scherma && master && usingWeapon && usingWeapon.includes(master)) ? 2 : 0;
+    const disarmMalus = s.inv.disarmato ? -4 : 0;
+
+    const combEff = num(s.base.comb) + mindBonus + weaponBonus + disarmMalus + num(s.fight.mod);
+    $('#kpiComb').textContent = isNaN(combEff) ? '—' : combEff;
+
+    const parts = [];
+    parts.push(`base ${s.base.comb||0}`);
+    if(mindBonus) parts.push(`+2 Psicolaser`);
+    if(weaponBonus) parts.push(`+2 Scherma`);
+    if(disarmMalus) parts.push(`−4 disarmato`);
+    if(s.fight.mod) parts.push(`${s.fight.mod>0?'+':''}${s.fight.mod} mod`);
+    $('#kpiCombBreak').textContent = parts.join('  ');
+
+    // Resistenza
+    const resMax = num($('#pgResMax').value || 0);
+    const resNow = num($('#kpiRes').textContent || resMax);
+    $('#kpiRes').textContent = resNow;
+    $('#kpiResMax').textContent = resMax? `max ${resMax}` : '';
+
+    // Rapporto di Forza
+    const rf = (isNaN(combEff)||isNaN(s.fight.comb)) ? null : (combEff - s.fight.comb);
+    $('#kpiRF').textContent = (rf===null) ? '—' : rf;
+  }
+  
+  // Rendi la funzione setRes globale
+  window.setRes = function(newVal, opts = {}) {
+    const s = readState();
+    const max = num($('#pgResMax').value) || 0;
+    const current = num($('#kpiRes').textContent) || max;
+    let v = num(newVal);
+    const maxCap = max || 0;
+    // Cap sempre al massimo iniziale
+    if (v > maxCap) v = maxCap;
+
+    // Aggiorna lo stato in localStorage
+    s.base = s.base || {};
+    s.base.resNow = v;
+    localStorage.setItem(SKEY, JSON.stringify(s));
+
+    // Aggiorna l'interfaccia
+    $('#kpiRes').textContent = v;
+    $('#kpiResMax').textContent = max ? `max ${max}` : '';
+  }
+
+  function getRes(){
+    return num($('#kpiRes').textContent);
+  }
+
+  // UI bindings
+  ['pgNome','pgLibro','pgCombBase','pgResMax','arma1','arma2','armaInUso','disarmato','pasti','oro','enmNome','enmComb','enmRes','enmImm','combMod','useMindblast','dCaccia','dGuarigione','dOrientamento','dMimetismo','dSestoSenso','dScherma','dPsicolaser','dPsicoschermo','dAffAnimale','dTelecinesi','armaMaestra','discipNote'].forEach(id=>{
+    const el = $('#'+id); if(!el) return; el.addEventListener('input', ()=>{ updateDerived(); });
+    if(el.type==='checkbox') el.addEventListener('change', updateDerived);
+  });
+  
+  // Aggiungi listener per aggiornare la Resistenza massima
+  $('#pgResMax').addEventListener('input', ()=>{
+      const max = num($('#pgResMax').value);
+      const current = num($('#kpiRes').textContent);
+      if (current > max) {
+          setRes(max, {manual: true});
+      }
+      updateDerived();
+  });
+
+
+  $('#btnPastiPlus').onclick = ()=> { $('#pasti').value = num($('#pasti').value)+1; };
+  $('#btnPastiMinus').onclick = ()=> { $('#pasti').value = Math.max(0, num($('#pasti').value)-1); };
+  $('#btnOroPlus').onclick = ()=> { $('#oro').value = clamp(num($('#oro').value)+1,0,50); };
+  $('#btnOroMinus').onclick = ()=> { $('#oro').value = clamp(num($('#oro').value)-1,0,50); };
+
+  $('#btnAddZaino').onclick = ()=> { const t=$('#zainoInput').value.trim(); if(!t) return; if($$('#zainoList .chip').length>=8) {alert('Zaino pieno (max 8).'); try{window.__SFX__.play('err')}catch(_){ }; try{flash(document.getElementById('zainoList'),'flash-warn')}catch(_){ } return;} addChip('#zainoList', t); $('#zainoInput').value=''; };
+  $('#btnAddSpec').onclick = ()=> { const t=$('#specInput').value.trim(); if(!t) return; addChip('#specList', t); $('#specInput').value=''; };
+
+  $('#btnRandom').onclick = ()=> { const n = Math.floor(Math.random()*10); $('#rnd').textContent = n; try{window.__SFX__.play('roll')}catch(_){}};
+
+  $('#btnRollComb').onclick = ()=> { const b = num($('#pgCombBase').value)||0; const n=Math.floor(Math.random()*10); $('#pgCombBase').value = b + n; updateDerived(); try{window.__SFX__.play('roll')}catch(_){}};
+  $('#btnRollRes').onclick = ()=> { const b = num($('#pgResMax').value)||0; const n=Math.floor(Math.random()*10); $('#pgResMax').value = b + n; setRes(num($('#pgResMax').value), {manual: true}); updateDerived(); try{window.__SFX__.play('roll')}catch(_){}};
+
+  $('#btnGuarigione').onclick = ()=> {
+    if(!$('#dGuarigione').checked){ alert('Per usare Guarigione devi avere la disciplina.'); return; }
+    setRes(getRes()+1, {manual: true});
+  };
+
+  $('#btnPasto').onclick = ()=> {
+    const p = num($('#pasti').value)||0;
+    if(p>0){ $('#pasti').value = p-1; }
+    else { setRes(getRes()-3, {manual: true}); }
+  };
+  
+  // Modifica per preservare la Resistenza
+  $('#btnStart').onclick = ()=> {
+    turn = 0; $('#logBody').innerHTML = ''; updateDerived();
+    const resNow = getRes();
+    const resMax = num($('#pgResMax').value);
+    setRes(Math.min(resNow, resMax), {manual: true}); // Preserve current health
+  };
+
+  $('#btnApplica').onclick = ()=> {
+    const s = readState();
+    const rf = (num($('#kpiComb').textContent) - s.fight.comb);
+    const n = $('#rnd').textContent === '—' ? null : num($('#rnd').textContent);
+    const dN = num($('#dmgN').value), dLS = num($('#dmgLS').value);
+    if(n===null){ alert('Estrai prima il Numero del Destino.'); return; }
+    if(dN<0||dLS<0){ alert('Inserisci danni validi.'); return; }
+
+    // apply
+    const newEnm = Math.max(0, s.fight.res - dN);
+    const newLS = Math.max(0, getRes() - dLS);
+
+    // persist enemy res in state
+    s.fight.res = newEnm; 
+    setRes(newLS); 
+    localStorage.setItem(SKEY, JSON.stringify(s));
+
+    // log row
+    const row = document.createElement('div'); row.className='row table row';
+    const cells = [++turn, (s.fight.nome||'Nemico'), rf, n, dN, dLS, (newLS<=0? 'LS MORTO' : newEnm<=0? 'Nemico MORTO' : '—')];
+    cells.forEach((val,i)=>{
+      const c=document.createElement('div'); c.className='cell'+(i>=4?' right':''); if(i===6) c.className='cell center'; c.textContent = val; row.appendChild(c);
+    });
+    $('#logBody').appendChild(row);
+
+    // reflect KPIs
+    $('#enmRes').value = newEnm; setRes(newLS); updateDerived();
+    try{
+      if(dN>0) window.__SFX__.play('hitE');
+      if(dLS>0) window.__SFX__.play('hitLS');
+      if(newEnm<=0) window.__SFX__.play('kill');
+      if(newLS<=0) window.__SFX__.play('die');
+    }catch(_){ }
+    try{
+      if(newEnm<=0) flash(document.getElementById('log'),'flash-ok');
+      if(newLS<=0) flash(document.querySelector('.sticky'),'flash-danger');
+    }catch(_){ }
+    // clear round inputs
+    $('#dmgN').value = 0; $('#dmgLS').value = 0; $('#rnd').textContent = '—';
+  };
+
+  $('#btnFuga').onclick = ()=>{
+    alert('Regola riepilogata: puoi fuggire solo se il testo lo consente. Devi comunque risolvere almeno un turno di scontro; quando fuggi, non consideri i punti persi dal nemico, ma applichi i tuoi (vedi libro).');
+  };
+
+  $('#btnSalva').onclick = save;
+  $('#btnEsporta').onclick = ()=>{ try{window.__SFX__.play('ok')}catch(_){ }; try{flash(document.querySelector('.sticky'), 'flash-ok')}catch(_){ }
+    const blob = new Blob([localStorage.getItem(SKEY) || JSON.stringify(readState())], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lupo-solitario-scheda.json'; a.click();
+  };
+  $('#importFile').addEventListener('change', (e)=>{
+    const f = e.target.files?.[0]; if(!f) return; const r = new FileReader(); r.onload = ()=> { try{writeState(JSON.parse(r.result)); save(); try{window.__SFX__.play('ok')}catch(_){ }; try{flash(document.querySelector('.sticky'),'flash-ok')}catch(_){ }}catch(err){alert('File non valido.'); try{window.__SFX__.play('err')}catch(_){ }} }; r.readAsText(f);
+  });
+
+  // Draw a 10x10 grid resembling the Random Number Table
+  (function drawDestino(){
+    const cvs = $('#destinoCanvas'); const ctx = cvs.getContext('2d');
+    const W = cvs.width, H=cvs.height; const cols=10, rows=10; const cw=W/cols, rh=H/rows;
+    ctx.clearRect(0,0,W,H);
+    ctx.font = '16px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    // fill random digits 0–9, deterministic per reload
+    const rng = ()=> Math.floor(Math.random()*10);
+    for(let y=0;y<rows;y++){
+      for(let x=0;x<cols;x++){
+        const px = x*cw, py=y*rh;
+        ctx.fillStyle = (x+y)%2? '#0f1420':'#0d121a';
+        ctx.fillRect(px,py,cw,rh);
+        ctx.strokeStyle = '#24304a'; ctx.strokeRect(px+.5,py+.5,cw-1,rh-1);
+        const v = rng();
+        ctx.fillStyle = '#e7eaf0'; ctx.fillText(String(v), px+cw/2, py+rh/2);
       }
     }
-    if(t.matches('input[data-act="mod"]')){
-      beep(500,40,'sine');
-    }
-    syncStateFromRows();
-    syncUI();
-    markDirty();
-    syncRowsFromState();
-  });
-
-  // Stepper buttons (±) — avoid focusing input to not pop the keyboard
-  document.addEventListener('click', (e)=>{
-    const el = e.target.closest('button.mini[data-step]');
-    if(!el) return;
-    e.preventDefault();
-    const id = el.getAttribute('data-step');
-    const delta = Number(el.getAttribute('data-delta'))||0;
-    const inp = document.getElementById(id);
-    const cur = Number(inp.value||0);
-    inp.value = cur + delta;
-    inp.dispatchEvent(new Event('input', {bubbles:true}));
-    beep(delta>0?700:420,50,'sine');
-  }, {passive:true});
-
-  // Inputs
-  ;[cmbBase, ...cmbMods, endCur, endTot, ...endMods].forEach(inp=>{
-    inp.addEventListener('input', ()=>{ syncUI(); markDirty(); });
-  });
-
-  function nowStr(){
-    const d=new Date(); const p=n=>String(n).padStart(2,'0');
-    return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-  }
-
-  // Save / Load
-  function readState(){
-    syncStateFromRows();
-    return {
-      cmbBase: Number(cmbBase.value||0),
-      cmbMods: cmbMods.map(el=>Number(el.value||0)),
-      cmbW1: Number(cmbW1.value||0),
-      cmbW2: Number(cmbW2.value||0),
-      endCur: Number(endCur.value||0),
-      endTot: Number(endTot.value||0),
-      endMods: endMods.map(el=>Number(el.value||0)),
-      weapons: weaponState.map(w=>({...w})),
-      autosave: autosave.checked,
-      autosaveMins: Number(autosaveMins.value||5),
-      mute: muteToggle.checked
-    };
-  }
-  function writeState(s){
-    cmbBase.value = s.cmbBase||0;
-    s.cmbMods?.forEach((v,i)=>{ if(cmbMods[i]) cmbMods[i].value = v; });
-    endCur.value = s.endCur||0;
-    endTot.value = s.endTot||0;
-    s.endMods?.forEach((v,i)=>{ if(endMods[i]) endMods[i].value = v; });
-    if(Array.isArray(s.weapons)){
-      weaponRows.forEach((row,i)=>{
-        const w = s.weapons[i]; if(!w) return;
-        row.querySelector('input[data-act="disc"]').checked = !!w.fav;
-        row.querySelector('input[data-act="eq"]').checked   = !!w.eq;
-        row.querySelector('input[data-act="mod"]').value    = w.mod || 0;
-        row.classList.toggle('kaiFav', !!w.fav);
-        weaponState[i] = { name: weaponState[i].name, fav:!!w.fav, eq:!!w.eq, mod:Number(w.mod||0) };
-      });
-    }
-    autosave.checked = !!s.autosave;
-    if(s.autosaveMins){ autosaveMins.value = String(s.autosaveMins); }
-    muteToggle.checked = !!s.mute;
-    syncUI();
-  }
-
-  function saveState(){
-    const s = readState();
-    localStorage.setItem(SKEY, JSON.stringify(s));
-    lastSave.textContent = nowStr();
-    // rotate snapshots (keep last 3)
-    let hist = [];
-    try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{ hist=[]; }
-    hist.push({ts: Date.now(), time: new Date().toLocaleString(), s});
-    while(hist.length>3) hist.shift();
-    localStorage.setItem(HKEY, JSON.stringify(hist));
-    updateRestoreButtons();
-    dirty=false;
-  }
-  function loadState(){
-    try{
-      const s = JSON.parse(localStorage.getItem(SKEY)||'{}');
-      if(s && Object.keys(s).length){ writeState(s); }
-      else { syncRowsFromState(); syncUI(); }
-    }catch{ syncRowsFromState(); syncUI(); }
-    updateRestoreButtons();
-  }
-  function updateRestoreButtons(){
-    let hist = [];
-    try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{ hist=[]; }
-    const slots = hist.slice(-3);
-    [restore1, restore2, restore3].forEach((btn,ix)=>{
-      const item = slots[ix];
-      if(item){ btn.textContent = `Slot ${ix+1} (${new Date(item.ts).toLocaleTimeString()})`; btn.disabled=false; }
-      else{ btn.textContent = `Slot ${ix+1}`; btn.disabled=true; }
+    cvs.addEventListener('click', (ev)=>{
+      const rect=cvs.getBoundingClientRect(); const x=ev.clientX-rect.left, y=ev.clientY-rect.top;
+      const cx=Math.floor(x/cw), cy=Math.floor(y/rh);
+      // pseudo-random from cell coords
+      const v = (cx*7 + cy*3 + Date.now())%10; $('#rnd').textContent = v.toString().slice(-1);
     });
-  }
-  [restore1, restore2, restore3].forEach((btn,ix)=>{
-    btn.addEventListener('click', ()=>{
-      let hist = [];
-      try{ hist = JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch{}
-      const slots = hist.slice(-3);
-      const item = slots[ix];
-      if(!item) return;
-      writeState(item.s);
-      localStorage.setItem(SKEY, JSON.stringify(item.s));
-      lastSave.textContent = 'ripristino ' + new Date(item.ts).toLocaleTimeString();
-      beep(520,70,'sine');
-    });
-  });
+  })();
 
-  // autosave / manual
-  let timer = null;
-  function startAutosave(){
-    if(timer) clearInterval(timer);
-    if(autosave.checked){
-      const mins = Math.max(1, Number(autosaveMins.value||5));
-      timer = setInterval(()=>{ if(dirty) saveState(); }, mins*60*1000);
-    }
-  }
-  autosave.addEventListener('change', ()=>{ startAutosave(); beep(480,60,'sine'); });
-  autosaveMins.addEventListener('change', ()=>{ startAutosave(); beep(560,60,'sine'); });
-  saveNow.addEventListener('click', ()=>{ saveState(); beep(680,80,'triangle'); });
-  let dirty=false;
-  function markDirty(){ dirty=true; }
-
-  // Init
-  loadState();
-  startAutosave();
-  window.addEventListener('beforeunload', ()=>{ if(dirty) saveState(); });
+  // init
+  load(); updateDerived();
 })();
 </script>
+
+<script>
+(function(){ 
+  const $ = (sel)=> document.querySelector(sel);
+  const SKEY = 'lw_companion_v1';
+  // Precarica CRT (se non già presente in localStorage)
+  const PRELOAD = [[{"e": 0, "ls": "M"}, {"e": 0, "ls": "M"}, {"e": 0, "ls": -8}, {"e": 0, "ls": -6}, {"e": 0, "ls": -6}, {"e": -1, "ls": -5}, {"e": -2, "ls": -5}, {"e": -3, "ls": -5}, {"e": -5, "ls": -4}, {"e": -6, "ls": -4}, {"e": -7, "ls": -4}, {"e": -8, "ls": -3}, {"e": -9, "ls": -3}], [{"e": 0, "ls": "M"}, {"e": 0, "ls": -8}, {"e": 0, "ls": -7}, {"e": 0, "ls": -6}, {"e": -1, "ls": -5}, {"e": -2, "ls": -5}, {"e": -3, "ls": -4}, {"e": -4, "ls": -4}, {"e": -5, "ls": -3}, {"e": -6, "ls": -3}, {"e": -7, "ls": -3}, {"e": -8, "ls": -3}, {"e": -10, "ls": -2}], [{"e": 0, "ls": -8}, {"e": 0, "ls": -7}, {"e": -1, "ls": -6}, {"e": -2, "ls": -5}, {"e": -3, "ls": -5}, {"e": -4, "ls": -4}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -3}, {"e": -8, "ls": -3}, {"e": -9, "ls": -2}, {"e": -10, "ls": -2}, {"e": -11, "ls": -2}], [{"e": 0, "ls": -8}, {"e": -1, "ls": -7}, {"e": -2, "ls": -6}, {"e": -3, "ls": -5}, {"e": -4, "ls": -4}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -3}, {"e": -8, "ls": -2}, {"e": -9, "ls": -2}, {"e": -10, "ls": -2}, {"e": -11, "ls": -2}, {"e": -12, "ls": -2}], [{"e": -1, "ls": -7}, {"e": -2, "ls": -6}, {"e": -3, "ls": -5}, {"e": -4, "ls": -4}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -2}, {"e": -8, "ls": -2}, {"e": -9, "ls": -2}, {"e": -10, "ls": -2}, {"e": -11, "ls": -2}, {"e": -12, "ls": -2}, {"e": -14, "ls": -1}], [{"e": -2, "ls": -6}, {"e": -3, "ls": -6}, {"e": -4, "ls": -5}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -2}, {"e": -8, "ls": -2}, {"e": -9, "ls": -2}, {"e": -10, "ls": -2}, {"e": -11, "ls": -1}, {"e": -12, "ls": -1}, {"e": -14, "ls": -1}, {"e": -16, "ls": -1}], [{"e": -3, "ls": -5}, {"e": -4, "ls": -5}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -2}, {"e": -8, "ls": -2}, {"e": -9, "ls": -1}, {"e": -10, "ls": -1}, {"e": -11, "ls": -1}, {"e": -12, "ls": 0}, {"e": -14, "ls": 0}, {"e": -16, "ls": 0}, {"e": -18, "ls": 0}], [{"e": -4, "ls": -4}, {"e": -5, "ls": -4}, {"e": -6, "ls": -3}, {"e": -7, "ls": -2}, {"e": -8, "ls": -1}, {"e": -9, "ls": -1}, {"e": -10, "ls": 0}, {"e": -11, "ls": 0}, {"e": -12, "ls": 0}, {"e": -14, "ls": 0}, {"e": -16, "ls": 0}, {"e": -18, "ls": 0}, {"e": "M", "ls": 0}], [{"e": -5, "ls": -3}, {"e": -6, "ls": -3}, {"e": -7, "ls": -2}, {"e": -8, "ls": 0}, {"e": -9, "ls": 0}, {"e": -10, "ls": 0}, {"e": -11, "ls": 0}, {"e": -12, "ls": 0}, {"e": -14, "ls": 0}, {"e": -16, "ls": 0}, {"e": -18, "ls": 0}, {"e": "M", "ls": 0}, {"e": "M", "ls": 0}], [{"e": -6, "ls": 0}, {"e": -7, "ls": 0}, {"e": -8, "ls": 0}, {"e": -9, "ls": 0}, {"e": -10, "ls": 0}, {"e": -11, "ls": 0}, {"e": -12, "ls": 0}, {"e": -14, "ls": 0}, {"e": -16, "ls": 0}, {"e": -18, "ls": 0}, {"e": "M", "ls": 0}, {"e": "M", "ls": 0}, {"e": "M", "ls": 0}]];
+  try{ const cur = JSON.parse(localStorage.getItem(SKEY)||'{}')||{}; cur.sys=cur.sys||{}; if(!cur.sys.crt){ cur.sys.crt=PRELOAD; localStorage.setItem(SKEY, JSON.stringify(cur)); } }catch(_){}
+
+  function num(v){ return Number.isFinite(+v)? +v : 0; }
+  function getCRT(){ try{ return (JSON.parse(localStorage.getItem(SKEY)||'{}')||{}).sys?.crt || PRELOAD; }catch(_){ return PRELOAD; } }
+  function rnToRow(rn){ const order=[1,2,3,4,5,6,7,8,9,0]; return order.indexOf(Number(rn)); }
+  function rofToCol(rof){
+    if(rof<=-11) return 0; if(rof>=11) return 12;
+    if(rof<=-10) return 1; if(rof<=-8) return 2; if(rof<=-6) return 3;
+    if(rof<=-4) return 4; if(rof<=-2) return 5; if(rof===0) return 6;
+    if(rof<=2) return 7; if(rof<=4) return 8; if(rof<=6) return 9;
+    if(rof<=8) return 10; if(rof<=10) return 11; return 12;
+  }
+  function parseRN(){ const t=(document.getElementById('rnd')?.textContent||'').trim(); if(!t||t==='—') return null; return Number(t); }
+  function parseRF(){ const t=(document.getElementById('kpiRF')?.textContent||'').trim(); if(!t||t==='—') return null; return Number(t); }
+
+  function currentEnemyRes(){ return num(document.getElementById('enmRes')?.value||0); }
+  function currentLSRes(){ return num(document.getElementById('kpiRes')?.textContent||0); }
+
+  function setDamageInputs(dN, dLS){ if(document.getElementById('dmgN')) document.getElementById('dmgN').value = Math.max(0, num(dN)); if(document.getElementById('dmgLS')) document.getElementById('dmgLS').value = Math.max(0, num(dLS)); }
+
+  function computeFromCRT(){ 
+    const rn=parseRN(); const rf=parseRF(); if(rn===null||rf===null) return;
+    const row=rnToRow(rn); if(row<0) return; const col=rofToCol(rf); const crt=getCRT(); const cell=(crt[row]&&crt[row][col])? crt[row][col]:null; if(!cell) return;
+    const e=cell.e, ls=cell.ls; const enNow=currentEnemyRes(); const lsNow=currentLSRes();
+    const dmgN = (e==='M')? enNow : Math.abs(num(e));
+    const dmgLS = (ls==='M')? lsNow : Math.abs(num(ls));
+    setDamageInputs(dmgN, dmgLS);
+  }
+
+  function observeText(el, cb){ if(!el) return; const mo=new MutationObserver(cb); mo.observe(el,{childList:true,characterData:true,subtree:true}); }
+  observeText(document.getElementById('rnd'), computeFromCRT);
+  observeText(document.getElementById('kpiRF'), computeFromCRT);
+  ['pgCombBase','pgResMax','disarmato','armaMaestra','armaInUso','dPsicolaser','useMindblast','enmComb','combMod','enmImm','enmRes']
+    .forEach(id=>{ const e=document.getElementById(id); if(e) e.addEventListener('input', computeFromCRT); });
+  window.addEventListener('DOMContentLoaded', computeFromCRT);
+
+  // Fine duello: clamp, messaggi, e blocco del bottone
+  function clamp0(x){ return Math.max(0, num(x)); }
+  function getResNow(){ return num(document.getElementById('kpiRes')?.textContent||0); }
+  function setBtnApplica(disabled, msg){
+    const b = document.getElementById('btnApplica'); if(!b) return;
+    b.disabled = !!disabled;
+    if(disabled && msg) alert(msg);
+  }
+  // Wrap handler originale di Applica
+  const btn = document.getElementById('btnApplica');
+  if(btn){
+    const prev = btn.onclick;
+    btn.onclick = ()=>{ 
+      if(typeof prev==='function') prev(); 
+      // dopo l'applicazione del turno, verifica esiti
+      const en = clamp0(document.getElementById('enmRes')?.value||0);
+      const ls = clamp0(getResNow());
+      // riflette clamp immediatamente a UI
+      if(document.getElementById('enmRes')) document.getElementById('enmRes').value = en;
+      // KPI di Lupo aggiornato è già gestito da setRes() chiamato dall'handler originale; qui assicuriamo clamp 0
+      if(en<=0 && ls<=0) { setBtnApplica(true, 'Il duello è giunto al termine con la morte di Lupo Solitario'); }
+      else if(ls<=0) { setBtnApplica(true, 'Il duello è giunto al termine con la morte di Lupo Solitario'); }
+      else if(en<=0) { setBtnApplica(true, 'Il duello è giunto al termine'); }
+    };
+  }
+
+  // Se qualcuno imposta manualmente RES Nemico a 0, blocca subito
+  const enField = document.getElementById('enmRes');
+  if(enField) enField.addEventListener('input', ()=>{ const en=clamp0(enField.value); enField.value=en; if(en<=0) setBtnApplica(true, 'Il duello è giunto al termine'); else setBtnApplica(false); });
+
+})();</script>
+
+<script>
+(function(){
+  const $ = (sel)=> document.querySelector(sel);
+  function num(v){ return Number.isFinite(+v)? +v : 0; }
+  function getResNow(){ return num(document.getElementById('kpiRes').textContent); }
+  function getResMax(){ return num(document.getElementById('pgResMax').value); }
+  
+  // Nuovi pulsanti + e -
+  function injectPlusMinus(){
+    const host = document.getElementById('kpiRes');
+    if(!host || host.dataset.pmInjected==='1') return;
+    const wrap = host.parentElement;
+    if(!wrap) return;
+    const minus = document.createElement('button');
+    minus.textContent = '−';
+    minus.className = 'btn';
+    minus.style.marginLeft = '8px';
+    minus.onclick = ()=>{
+      const current = getResNow();
+      window.setRes(current - 1, {manual: true});
+    };
+    const plus = document.createElement('button');
+    plus.textContent = '+';
+    plus.className = 'btn';
+    plus.style.marginLeft = '6px';
+    plus.onclick = ()=>{
+      const current = getResNow();
+      window.setRes(current + 1, {manual: true});
+    };
+    wrap.appendChild(minus); wrap.appendChild(plus);
+    host.dataset.pmInjected='1';
+  }
+  window.addEventListener('DOMContentLoaded', injectPlusMinus);
+
+})();
+</script>
+
+<script>
+// --- 8-bit SFX (WebAudio) ---
+(function(){
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audio = null; let soundsOn = true; let throttleAt = 0;
+  const SFX = {
+    roll:  {type:'square', f:880, dur:.08, step:[660]},
+    ok:    {type:'triangle', f:620, dur:.12, arp:[980]},
+    coin:  {type:'square', f:740, dur:.12, arp:[1180]},
+    err:   {type:'square', f:220, dur:.18, vib:10},
+    hitE:  {type:'square', f:520, dur:.08, noise:.04},
+    hitLS: {type:'square', f:360, dur:.10, step:[300]},
+    kill:  {type:'square', f:900, dur:.22, arp:[1080,1200]},
+    die:   {type:'triangle', f:200, dur:.6, step:[160,140]}
+  };
+  function play(defKey){
+    if(!soundsOn) return;
+    const now = performance.now();
+    if(now - throttleAt < 70) return; // anti-spam
+    throttleAt = now;
+    const def = SFX[defKey]; if(!def) return;
+    if(!audio) audio = new AudioCtx();
+    const t0 = audio.currentTime;
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = def.type; o.frequency.setValueAtTime(def.f, t0);
+    if(def.vib){
+      const lfo = audio.createOscillator(); const lfoGain = audio.createGain();
+      lfo.frequency.value = 20; lfoGain.gain.value = def.vib;
+      lfo.connect(lfoGain).connect(o.frequency);
+      lfo.start(t0); lfo.stop(t0 + def.dur);
+    }
+    g.gain.setValueAtTime(0.14, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + def.dur);
+    o.connect(g).connect(audio.destination);
+    o.start(t0); o.stop(t0 + def.dur);
+    if(def.step){
+      def.step.forEach((f,i)=>{
+        const o2=audio.createOscillator(), g2=audio.createGain();
+        const d = 0.06*(i+1);
+        o2.type = def.type; o2.frequency.setValueAtTime(f, t0+d);
+        g2.gain.setValueAtTime(0.12, t0+d);
+        g2.gain.exponentialRampToValueAtTime(0.0001, t0+d+0.1);
+        o2.connect(g2).connect(audio.destination);
+        o2.start(t0+d); o2.stop(t0+d+0.1);
+      });
+    }
+    if(def.arp){
+      def.arp.forEach((f,i)=>{
+        const o2=audio.createOscillator(), g2=audio.createGain();
+        const d = 0.05*(i+1);
+        o2.type = def.type; o2.frequency.setValueAtTime(f, t0+d);
+        g2.gain.setValueAtTime(0.12, t0+d);
+        g2.gain.exponentialRampToValueAtTime(0.0001, t0+d+0.08);
+        o2.connect(g2).connect(audio.destination);
+        o2.start(t0+d); o2.stop(t0+d+0.08);
+      });
+    }
+    if(def.noise){
+      const buff = audio.createBuffer(1, audio.sampleRate*def.noise, audio.sampleRate);
+      const data = buff.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1)*(1-(i/data.length));
+      const n = audio.createBufferSource(); n.buffer=buff;
+      const g3 = audio.createGain(); g3.gain.value=0.12;
+      n.connect(g3).connect(audio.destination);
+      n.start(t0); n.stop(t0+def.noise);
+    }
+  }
+  window.__SFX__ = { play, set(on){ soundsOn=!!on; } };
+  // Toggle UI
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const btn = document.getElementById('btnSuoni');
+    if(btn){
+      btn.addEventListener('click', ()=>{
+        const on = btn.textContent.includes('ON');
+        window.__SFX__.set(!on);
+        btn.textContent = on ? '🔇 Suoni: OFF' : '🔊 Suoni: ON';
+      });
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
